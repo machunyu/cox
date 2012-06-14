@@ -1054,7 +1054,8 @@ SysCtlPeripheralClockSourceSet(unsigned long ulPeripheralSrc)
            );
     if(SYSCTL_PERIPH_INDEX_CLK(ulPeripheralSrc) == 1)
     {
-        xHWREG(RCC_BDCR) &= ~(RCC_BDCR_RTCSEL_M);
+        //xHWREG(RCC_BDCR) &= ~(RCC_BDCR_RTCSEL_M);
+        xHWREG(RCC_BDCR) |=(((ulPeripheralSrc)&0xf)<<8);
     }
     else if(SYSCTL_PERIPH_INDEX_CLK(ulPeripheralSrc) == 0)
     {

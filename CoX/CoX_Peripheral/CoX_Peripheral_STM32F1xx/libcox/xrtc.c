@@ -54,7 +54,7 @@
 static xtEventCallback g_pfnRTCHandlerCallbacks[1]={0};
 
 #define xRTC_COUNTER            1
-#define xRTC_AUTO			    1
+#define xRTC_AUTO	        1
 
 #ifdef xRTC_COUNTER
 static xtTime xtBaseTime;
@@ -269,13 +269,37 @@ xRTCConvertCounterToTime(xtTime *xtTime, unsigned long ultimeCounter)
 //! \return None.
 //
 //*****************************************************************************
+//void 
+//RTCIntHandler(void)
 void 
-RTCIntHandler(void)
+RTC_IRQHandler(void)
 {
     unsigned long ulEventFlags;
     
+		//
+		// Get Int Flags
+		//
     ulEventFlags = xHWREG(RTC_CRL);
     
+		//
+		// Clear Second Int Flags
+		//
+		if(ulEventFlags&0x0001)	
+		{
+				xHWREG(RTC_CRL) &= (~0x0001);
+		}
+		//
+		// Clear Alarm Int Flags
+		//
+		if(ulEventFlags&0x0002)
+		{
+				xHWREG(RTC_CRL) &= (~0x0002);
+		}
+		//
+		// Waits until last write operation on RTC registers has finished
+		//
+		while(!(xHWREG(RTC_CRL) & RTC_CRL_RTOFF));
+	
     //
     // Call Callback function
     //
@@ -308,7 +332,7 @@ RTCTimeInit(unsigned long ulConfig)
     // Clear RSF flag .
     //
     xHWREG(RTC_CRL) &= ~RTC_CRL_RSF;
-    while(!(xHWREG(RTC_CRL) & RTC_CRL_RSF));
+    while((xHWREG(RTC_CRL) & RTC_CRL_RSF)== 0);
 
     while(!(xHWREG(RTC_CRL) & RTC_CRL_RTOFF));
 
@@ -375,13 +399,13 @@ RTCTimeRead(tTime *tTime, unsigned long ulTimeAlarm)
     if(ulTimeAlarm == RTC_TIME_CURRENT)
     {
         ulTemp = xHWREG(RTC_CNTL) & RTC_CNTL_CNT_M;
-        ulTemp |= ((xHWREG(RTC_CNTH) << RTC_CNTH_CNT_S) & RTC_CNTH_CNT_M);
+        ulTemp |= (xHWREG(RTC_CNTH) << RTC_CNTH_CNT_S);
         xRTCConvertCounterToTime((xtTime *)tTime, ulTemp);
     }
     else
     {
         ulTemp = xHWREG(RTC_ALRL) & RTC_ALRL_CNT_M;
-        ulTemp |= ((xHWREG(RTC_ALRH) << RTC_ALRH_CNT_S) & RTC_ALRH_CNT_M);
+        ulTemp |= (xHWREG(RTC_ALRH) << RTC_ALRH_CNT_S);
         xRTCConvertCounterToTime((xtTime *)tTime, ulTemp);       
     }
     
@@ -446,7 +470,7 @@ RTCTimeWrite(tTime *tTime, unsigned long ulTimeAlarm)
     if (ulTimeAlarm == RTC_TIME_CURRENT)
     {
         xHWREG(RTC_CNTL) = ulTemp & RTC_CNTL_CNT_M;
-        xHWREG(RTC_CNTH) = (ulTemp >> RTC_CNTH_CNT_S) & RTC_CNTH_CNT_M;
+        xHWREG(RTC_CNTH) = (ulTemp & RTC_CNTH_CNT_M) >> RTC_CNTH_CNT_S;
     }
     else
     {
@@ -519,6 +543,25 @@ RTCIntDisable(unsigned long ulIntType)
     xHWREG(RTC_CRL) &= ~ulIntType; 
 }
 
+//*****************************************************************************
+//
+//! \brief Init interrupts callback for the RTC.
+//!
+//! \param xtPortCallback is callback for the RTC.
+//!
+//! Init interrupts callback for the RTC.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+RTCIntCallbackInit(xtEventCallback xtRTCCallback)
+{
+    if (xtRTCCallback != 0)
+    {
+        g_pfnRTCHandlerCallbacks[0] = xtRTCCallback;
+    }
+}
 
 //*****************************************************************************
 //
@@ -569,54 +612,3 @@ RTCFlagStatusClear(unsigned long ulFlag)
     
     xHWREG(RTC_CRL) |= ulFlag; 
 }
-
-//*****************************************************************************
-//
-//! \brief Get the RTC interrupt flag status. 
-//!
-//! \param None.
-//!
-//! This function is to get the RTC interrupt flag status.
-//!
-//! \return RTC interrupt flag status.
-//!
-//! The return value is the logical OR of any of the following:
-//! \b RTC_FLAG_OVERFLOW,\b RTC_FLAG_TIME_TICK and RTC_FLAG_ALARM.
-//
-//*****************************************************************************
-unsigned long
-RTCFlagStatusGet(void)
-{
-    return (xHWREG(RTC_CRL) & (0x2F)); 
-}
-
-//*****************************************************************************
-//
-//! \brief Clear the RTC interrupt flag status. 
-//!
-//! \param ulIntType is the bit mask of the interrupt sources to be clear.
-//!
-//! This function is to get the RTC interrupt flag status.
-//!
-//! The \e ulIntType parameter is the logical OR of any of the following:
-//! \b RTC_FLAG_OVERFLOW,\b RTC_FLAG_TIME_TICK RTC_FLAG_ALARM.
-//!
-//! \return None.
-//
-//*****************************************************************************
-void
-RTCFlagStatusClear(unsigned long ulIntType)
-{
-    //
-    // Check the arguments.
-    //
-    xASSERT(((ulIntType & RTC_FLAG_OVERFLOW) == RTC_FLAG_OVERFLOW) ||
-            ((ulIntType & RTC_FLAG_TIME_TICK) == RTC_FLAG_TIME_TICK) ||
-            ((ulIntType & RTC_FLAG_ALARM) == RTC_FLAG_ALARM));
-    
-    xHWREG(RTC_CRL) |= ulIntType; 
-}
-
-
-
-
