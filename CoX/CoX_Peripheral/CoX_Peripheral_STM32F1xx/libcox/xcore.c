@@ -92,6 +92,7 @@ IntDefaultHandler(void)
     //
     // Go into an infinite loop.
     //
+
     while(1)
     {
     }

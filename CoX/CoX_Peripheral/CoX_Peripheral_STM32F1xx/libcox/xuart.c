@@ -355,7 +355,6 @@ UARTConfigSet(unsigned long ulBase, unsigned long ulBaud,
 
     //
     // Configure the USART Word Length, Parity and mode.
-    // Configure the USART Word Length, Parity and mode.
     //  
     xHWREG(ulBase + USART_CR1) = ulConfig & (UART_CONFIG_WLEN_MASK | 
                                              UART_CONFIG_PAR_MASK);
@@ -860,6 +859,43 @@ UARTCharPut(unsigned long ulBase, unsigned char ucData)
     // Send the char.
     //
     xHWREG(ulBase + USART_DR) = ucData;
+}
+
+//*****************************************************************************
+//
+//! \brief Waits to send a character from the specified port.
+//!
+//! \param ulBase is the base address of the UART port.
+//! \param ucData is the character to be transmitted.
+//!
+//! Sends the character \e ucData to the transmit FIFO for the specified port.
+//! If there is no space available in the transmit FIFO, this function waits
+//! until there is space available before returning.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+UARTBufferWrite(unsigned long ulBase, unsigned char *ucBuffer,
+                unsigned long ulLength)
+{
+    
+    unsigned long ulCount;
+    //
+    // Check the arguments.
+    //
+    xASSERT(UARTBaseValid(ulBase));
+
+    //
+    // Wait until a char is available.
+    //
+    for (ulCount=0; ulCount<ulLength; ulCount++)
+    {
+        while(!(xHWREG(ulBase + USART_SR) & USART_SR_TXE))
+        {
+        }
+        xHWREG(ulBase + USART_DR) = ucBuffer[ulCount];
+    }
 }
 
 //*****************************************************************************
@@ -1445,5 +1481,3 @@ UARTSmartCardDisable(unsigned long ulBase)
     //
     xHWREG(ulBase + USART_CR3) &= ~USART_CR3_SCEN;
 }
-
-

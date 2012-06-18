@@ -883,7 +883,7 @@ extern unsigned long xSysCtlPeripheraIntNumGet(unsigned long ulPeripheralBase);
 //*****************************************************************************
 #define xSysCtlPeripheralClockSourceSet(ulPeripheralSrc, ulDivide)            \
         SysCtlPeripheralClockSourceSet(ulPeripheralSrc, ulDivide)
-											
+
 //*****************************************************************************
 //
 //! \brief Set a peripheral clock source and peripheral divide.
@@ -1816,6 +1816,8 @@ extern unsigned long xSysCtlPeripheraIntNumGet(unsigned long ulPeripheralBase);
 //
 #define SYSCTL_XTAL_16MHZ       0x00001000  
 
+
+
 //*****************************************************************************
 //
 //! @}
@@ -1854,7 +1856,15 @@ extern void SysCtlBackupDomainReset(void);
 extern unsigned long SysCtlHClockGet(void);
 extern unsigned long SysCtlAPB1ClockGet(void);
 extern unsigned long SysCtlAPB2ClockGet(void);
-
+extern void SysCtlBackupAccessEnable(void);
+extern void SysCtlBackupAccessDisable(void);
+extern void SysCtlPVDLevelConfig(unsigned long ulConfig);
+extern void SysCtlWakeUpPinEnable(void);
+extern void SysCtlWakeUpPinDisable(void);
+extern void SysCtlStopModeConfig(unsigned long ulConfig);
+extern void SysCtlEnterStandbyMode(void);
+extern unsigned long SysCtlFlagStatusGet(void);
+extern voidSysCtlFlagStatusClear(unsigned long ulFlag);
 //*****************************************************************************
 //
 //! @}
@@ -1891,4 +1901,3 @@ extern unsigned long SysCtlAPB2ClockGet(void);
 #endif
 
 #endif // __xSYSCTL_H__
-

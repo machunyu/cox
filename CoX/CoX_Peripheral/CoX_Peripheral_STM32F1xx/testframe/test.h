@@ -91,8 +91,7 @@ typedef struct
     //! \brief Test case execution function.
     //
     void (*Execute)(void);
-}
-tTestCase;
+}tTestCase;
 
 
 extern xtBoolean TestMain(void);

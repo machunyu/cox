@@ -1865,6 +1865,8 @@ extern long UARTCharGet(unsigned long ulBase);
 extern xtBoolean UARTCharPutNonBlocking(unsigned long ulBase, 
                                         unsigned char ucData);
 extern void UARTCharPut(unsigned long ulBase, unsigned char ucData);
+extern void UARTBufferWrite(unsigned long ulBase, unsigned char *ucBuffer,
+                              unsigned long ulLength);
 extern void UARTBreakCtl(unsigned long ulBase);
 extern void UARTIntEnable(unsigned long ulBase, unsigned long ulIntFlags);
 extern void UARTIntDisable(unsigned long ulBase, unsigned long ulIntFlags);

@@ -320,7 +320,7 @@ RTC_IRQHandler(void)
 //! \return None.
 //
 //*****************************************************************************
-void
+xtBoolean
 RTCTimeInit(unsigned long ulConfig)
 {
     //
@@ -344,12 +344,13 @@ RTCTimeInit(unsigned long ulConfig)
     //
     // Set RTC PRESCALER MSB word.
     //
-    xHWREG(RTC_PRLH) |= (ulConfig & RTC_PRLH_PRLH_M) >> RTC_PRLH_PRLH_S;
-
+    //xHWREG(RTC_PRLH) |= (ulConfig & RTC_PRLH_PRLH_M) >> RTC_PRLH_PRLH_S;
+		xHWREG(RTC_PRLH) = (ulConfig & RTC_PRLH_PRLH_M) >> RTC_PRLH_PRLH_S;
     //
     // Set RTC PRESCALER LSB word.
     //
-    xHWREG(RTC_PRLL) |= (ulConfig & RTC_PRLL_PRLL_M);
+    //xHWREG(RTC_PRLL) |= (ulConfig & RTC_PRLL_PRLL_M);
+		xHWREG(RTC_PRLL) = (ulConfig & RTC_PRLL_PRLL_M);
 
     //
     // Reset the CNF flag to exit from the Configuration Mode.
@@ -360,7 +361,7 @@ RTCTimeInit(unsigned long ulConfig)
     // Wait until last write operation on RTC registers has finished.
     //
     while(!(xHWREG(RTC_CRL) & RTC_CRL_RTOFF));
-    
+		return xtrue;
 }
 
 //*****************************************************************************

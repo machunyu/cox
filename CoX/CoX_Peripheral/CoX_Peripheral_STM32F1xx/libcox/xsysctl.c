@@ -45,7 +45,7 @@
 #include "xsysctl.h"
 #include "xcore.h"
 
-static unsigned long s_ulExtClockMHz = 12;
+static unsigned long s_ulExtClockMHz = 8;
 
 //*****************************************************************************
 //
@@ -124,6 +124,18 @@ static volatile const unsigned char g_APBAHBPrescTable[16] =
        {0, 0, 0, 0, 1, 2, 3, 4, 1, 2, 3, 4, 6, 7, 8, 9};
 static volatile const unsigned char g_ADCPrescTable[4] = {2, 4, 6, 8};
 
+static const unsigned char g_AHBPrescTable[9] = 
+{
+    15,
+    14,
+    13,
+    12,
+    0,
+    11,
+    10,
+    9,
+    8,
+};
 //*****************************************************************************
 //
 //! Peripheral Base and ID Table structure type
@@ -596,7 +608,8 @@ SysCtlClockSet(unsigned long ulSysClk, unsigned long ulConfig)
     //
     // Reset SW, HPRE, PPRE1, PPRE2, ADCPRE and MCO bits
     //
-    xHWREG(RCC_CFGR) &= 0xF0FF0000;
+    //xHWREG(RCC_CFGR) &= 0xF0FF0000;
+    xHWREG(RCC_CFGR) &= 0xF8FF0000;
     
     //
     // Reset HSEON, CSSON and PLLON bits 
@@ -623,8 +636,10 @@ SysCtlClockSet(unsigned long ulSysClk, unsigned long ulConfig)
     //
     xHWREG(RCC_CIR) &= 0x00FF0000;
 
+    xHWREG(RCC_CIR) |= 0x00001800;
+
     //
-    // Disable all interrupts and clear pending bits
+    // 
     //
     xHWREG(RCC_CFGR2) = 0x00000000; 
     
@@ -637,7 +652,7 @@ SysCtlClockSet(unsigned long ulSysClk, unsigned long ulConfig)
         case SYSCTL_OSC_MAIN:
         case xSYSCTL_OSC_MAIN:
         {
-            xASSERT(!(ulConfig & SYSCTL_MAIN_OSC_DIS));
+            //xASSERT(!(ulConfig & SYSCTL_MAIN_OSC_DIS));
 
             xHWREG(RCC_CR) &= ~RCC_CR_HSEON;
             xHWREG(RCC_CR) &= ~RCC_CR_HSERDY;
@@ -673,7 +688,8 @@ SysCtlClockSet(unsigned long ulSysClk, unsigned long ulConfig)
             }
             if((ulConfig & SYSCTL_PLL_PWRDN)!=0)
             {
-                xHWREG(RCC_CR) |= RCC_CR_PLLON;
+                //xHWREG(RCC_CR) |= RCC_CR_PLLON;
+                xHWREG(RCC_CR) &= ~RCC_CR_PLLON;
             }
             break;
         }
@@ -709,6 +725,38 @@ SysCtlClockSet(unsigned long ulSysClk, unsigned long ulConfig)
             break;
         }
     }
+    
+    //
+    //Enable prefetch Buffer 
+    //
+    xHWREG(FLASH_ACR) |= FLASH_ACR_PRFTBS;       
+    
+    if (ulSysClk <= 24000000)
+    {
+        //
+        //Flash 0 wait state
+        //
+        xHWREG(FLASH_ACR) &= ~FLASH_ACR_LATENCY_M;
+        xHWREG(FLASH_ACR) |= FLASH_ACR_LATENCY_0; 
+    }
+    else if(ulSysClk <= 48000000)
+    {
+        //
+        //Flash 1 wait state
+        //
+        xHWREG(FLASH_ACR) &= ~FLASH_ACR_LATENCY_M;
+        xHWREG(FLASH_ACR) |= FLASH_ACR_LATENCY_1;  
+    }
+    else if(ulSysClk <= 72000000)
+    {
+        
+        //
+        //Flash 2 wait state
+        //
+        xHWREG(FLASH_ACR) &= ~FLASH_ACR_LATENCY_M;
+        xHWREG(FLASH_ACR) |= FLASH_ACR_LATENCY_2;  
+    }
+
     xHWREG(RCC_CFGR) &= ~(RCC_CFGR_PPRE2_M | RCC_CFGR_PPRE1_M | RCC_CFGR_HPRE_M);
     if(ulSysClk == ulOscFreq)
     {
@@ -717,10 +765,16 @@ SysCtlClockSet(unsigned long ulSysClk, unsigned long ulConfig)
     else if (ulSysClk < ulOscFreq)
     {
         if((ulOscFreq % ulSysClk) == 0)
-        {
-            xHWREG(RCC_CFGR) |= (ulOscFreq / ulSysClk) << RCC_CFGR_HPRE_S;
-            xHWREG(RCC_CFGR) |= SYSCTL_APB1CLOCK_DIV << RCC_CFGR_PPRE1_S;
-            xHWREG(RCC_CFGR) |= SYSCTL_APB2CLOCK_DIV << RCC_CFGR_PPRE2_S;
+        {            
+            int i = 0;
+            for (i = 8; i >= 0; i--)
+             {
+                 if((ulOscFreq/ulSysClk) & (1<<i))
+                 {
+                     xHWREG(RCC_CFGR) |= (g_AHBPrescTable[i]) << RCC_CFGR_HPRE_S;
+                     break;
+                 }
+             }          
         }
         else
         {
@@ -770,16 +824,23 @@ SysCtlClockSet(unsigned long ulSysClk, unsigned long ulConfig)
                 return;
             }
         }
+            
+
+               
         xHWREG(RCC_CFGR) |= SYSCTL_APB1CLOCK_DIV << RCC_CFGR_PPRE1_S;
         xHWREG(RCC_CFGR) |= SYSCTL_APB2CLOCK_DIV << RCC_CFGR_PPRE2_S;
+
         xHWREG(RCC_CR) |= RCC_CR_PLLON;
         while((xHWREG(RCC_CR) | RCC_CR_PLLRDY) == 0);
+
         xHWREG(RCC_CFGR) &= ~RCC_CFGR_SW_M;
-        xHWREG(RCC_CFGR) |= 2;
+        xHWREG(RCC_CFGR) |= 0x02;
         while((xHWREG(RCC_CFGR) & RCC_CFGR_SWS_M) != 0x08);
+
         return;
     }
 }
+
 
 //*****************************************************************************
 //
@@ -1033,7 +1094,7 @@ SysCtlLSEConfig(unsigned long ulLSEConfig)
 void
 SysCtlPeripheralClockSourceSet(unsigned long ulPeripheralSrc)
 {
- //
+		//
     // Check the arguments.
     //
     xASSERT((ulPeripheralSrc==SYSCTL_RTC_LSE)||
@@ -1049,13 +1110,13 @@ SysCtlPeripheralClockSourceSet(unsigned long ulPeripheralSrc)
             (ulPeripheralSrc==SYSCTL_I2S3_SYSCLK)||
             (ulPeripheralSrc==SYSCTL_I2S3_PLL3)||
             (ulPeripheralSrc==SYSCTL_I2S2_SYSCLK)||
-            (ulPeripheralSrc==SYSCTL_I2S2_PLL3)|||
+            (ulPeripheralSrc==SYSCTL_I2S2_PLL3)||
             (ulPeripheralSrc==SYSCTL_MCO_PLL2)         
            );
     if(SYSCTL_PERIPH_INDEX_CLK(ulPeripheralSrc) == 1)
     {
         //xHWREG(RCC_BDCR) &= ~(RCC_BDCR_RTCSEL_M);
-        xHWREG(RCC_BDCR) |=(((ulPeripheralSrc)&0xf)<<8);
+				xHWREG(RCC_BDCR) |=(((ulPeripheralSrc)&0xf)<<8);
     }
     else if(SYSCTL_PERIPH_INDEX_CLK(ulPeripheralSrc) == 0)
     {
@@ -1547,4 +1608,3 @@ SysCtlFlagStatusClear(unsigned long ulFlag)
 {
     xHWREG(PWR_CR) |= (ulFlag & (PWR_CR_CWUF | PWR_CR_CSBF)) << 2;
 }
-

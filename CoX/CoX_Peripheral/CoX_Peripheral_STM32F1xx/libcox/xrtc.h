@@ -714,7 +714,7 @@ typedef struct
 //
 //*****************************************************************************
 
-extern void RTCTimeInit(unsigned long ulConfig);
+extern xtBoolean RTCTimeInit(unsigned long ulConfig);
 extern void RTCTimeRead(tTime *tTime, unsigned long ulTimeAlarm);
 extern void RTCTimeWrite(tTime *tTime, unsigned long ulTimeAlarm);
 extern void RTCIntEnable(unsigned long ulIntType);

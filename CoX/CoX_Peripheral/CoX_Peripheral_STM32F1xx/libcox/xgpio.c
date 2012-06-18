@@ -122,6 +122,22 @@ GPIOBaseValid(unsigned long ulPort)
 //*****************************************************************************
 void EXTI0IntHandler(void)
 {
+    unsigned long i;
+    
+    //
+    // Clear the interrupt flag.
+    //
+    
+    for(i=0; i<xGPIO_INT_NUMBER; i++)
+    {
+        if((g_psGPIOPinIntAssignTable[i].ulpinID & 0xffff) == GPIO_PIN_0)
+        {
+            if(g_psGPIOPinIntAssignTable[i].pfnGPIOPinHandlerCallback != 0)
+            {
+                g_psGPIOPinIntAssignTable[i].pfnGPIOPinHandlerCallback(0,0,0,0);
+            }
+        }
+    } 	
 }
 
 //*****************************************************************************
@@ -150,6 +166,22 @@ void EXTI1IntHandler(void)
 //*****************************************************************************
 void EXTI2IntHandler(void)
 {
+    unsigned long i;
+    
+    //
+    // Clear the interrupt flag.
+    //
+    
+    for(i=0; i<xGPIO_INT_NUMBER; i++)
+    {
+        if((g_psGPIOPinIntAssignTable[i].ulpinID & 0xffff) == GPIO_PIN_2)
+        {
+            if(g_psGPIOPinIntAssignTable[i].pfnGPIOPinHandlerCallback != 0)
+            {
+                g_psGPIOPinIntAssignTable[i].pfnGPIOPinHandlerCallback(0,0,0,0);
+            }
+        }
+    } 
 }
 
 //*****************************************************************************
@@ -208,6 +240,74 @@ void EXTI95IntHandler(void)
 void EXTI1510IntHandler(void)
 {
 
+}
+
+//*****************************************************************************
+//
+//! \brief Get the GPIO Peripheral Id from a short Pin.
+//!
+//! \param eShortPin is the base address of the GPIO port
+//! 
+//! \return GPIO port code which is used by \ref xSysCtlPeripheralEnable,
+//! \ref xSysCtlPeripheralDisable, \ref xSysCtlPeripheralReset.
+//
+//*****************************************************************************
+unsigned long 
+GPIOPinToPeripheralId(unsigned long ulPort, unsigned long ulPin)
+{
+        
+    //
+    // Check the arguments.
+    //
+    xASSERT(GPIOBaseValid(ulPort));
+
+    return ulPort;
+}
+
+//*****************************************************************************
+//
+//! \brief Get the GPIO port from a short Pin.
+//!
+//! \param eShortPin is the base address of the GPIO port
+//!
+//! \note None.
+//! 
+//! \return GPIO port address which is used by GPIO API.
+//
+//*****************************************************************************
+unsigned long 
+GPIOPinToPort(unsigned long ulPort, unsigned long ulPin)
+{
+        
+    //
+    // Check the arguments.
+    //
+    xASSERT(GPIOBaseValid(ulPort));
+
+    return ulPort;
+}
+
+//*****************************************************************************
+//
+//! \brief Get the GPIO pin number from a short Pin.
+//!
+//! \param eShortPin is the base address of the GPIO port
+//!
+//! \note None.
+//! 
+//! \return GPIO pin number which is used by GPIO API.
+//
+//*****************************************************************************
+unsigned long 
+GPIOPinToPin(unsigned long ulPort, unsigned long ulPin)
+{
+        
+    //
+    // Check the arguments.
+    //
+    xASSERT(GPIOBaseValid(ulPort));
+
+    return ulPin;
 }
 
 //*****************************************************************************
@@ -272,18 +372,18 @@ GPIODirModeSet(unsigned long ulPort, unsigned long ulBit,
     //
     if(ulBit < 8)
     {
-        xHWREG(ulPort + GPIO_CRL) = (xHWREG(ulPort + GPIO_CRL) &                \
-                                   (~(GPIO_CRL_MODE0_M << (ulBit * 4))));
+        xHWREG(ulPort + GPIO_CRL) = (xHWREG(ulPort + GPIO_CRL) &               \
+        (~((GPIO_CRL_MODE0_M | GPIO_CRL_CNF0_M) << (ulBit * 4))));
     
-        xHWREG(ulPort + GPIO_CRL) = (xHWREG(ulPort + GPIO_CRL) |                \
+        xHWREG(ulPort + GPIO_CRL) = (xHWREG(ulPort + GPIO_CRL) |               \
         (((ulPinSpeed | ulPinType)) << (ulBit * 4)));  
     }
     else
     {
-        xHWREG(ulPort + GPIO_CRH) = (xHWREG(ulPort + GPIO_CRH) &                \
+        xHWREG(ulPort + GPIO_CRH) = (xHWREG(ulPort + GPIO_CRH) &               \
         (~((GPIO_CRH_MODE8_M | GPIO_CRH_CNF8_M) << ((ulBit -8) * 4))));
     
-        xHWREG(ulPort + GPIO_CRH) = (xHWREG(ulPort + GPIO_CRH) |                \
+        xHWREG(ulPort + GPIO_CRH) = (xHWREG(ulPort + GPIO_CRH) |               \
         (((ulPinSpeed | ulPinType)) << ((ulBit -8) * 4)));
     }
 }
@@ -334,7 +434,7 @@ xGPIODirModeSet(unsigned long ulPort, unsigned long ulPins,
     //
     xASSERT(GPIOBaseValid(ulPort));
     xASSERT((ulPinIO == xGPIO_DIR_MODE_IN) || (ulPinIO == xGPIO_DIR_MODE_OUT) ||
-           (ulPinIO == xGPIO_DIR_MODE_HW) || (ulPinIO == xGPIO_DIR_MODE_OD));
+            (ulPinIO == xGPIO_DIR_MODE_OD));
 
     //
     // Set the pin direction and mode.
@@ -354,7 +454,7 @@ xGPIODirModeSet(unsigned long ulPort, unsigned long ulPins,
 //! Gets the direction and mode of a pin.
 //!
 //! \param ulPort is the base address of the GPIO port.
-//! \param ucBit is the pin number.
+//! \param ulBit is the pin number.
 //!
 //! This function gets the direction and control mode for a specified pin on
 //! the selected GPIO port.  The pin can be configured as either an input or
@@ -385,7 +485,7 @@ GPIODirModeGet(unsigned long ulPort, unsigned long ulBit)
     else
     {
         return((xHWREG(ulPort + GPIO_CRH) & 
-               (0xF << (ulBit * 4))) >> (ulBit * 4));
+               (0xF << ((ulBit - 8) * 4))) >> ((ulBit - 8) * 4));
     }
 }
 
@@ -433,7 +533,7 @@ xGPIODirModeGet(unsigned long ulPort, unsigned long ulPin)
 //! \brief Sets the interrupt type and Enables interrupts for the specified pin(s).
 //!
 //! \param ulPort is the base address of the GPIO port.
-//! \param ulBit is the bit-packed representation of the pin.
+//! \param ulPins is the bit-packed representation of the pin(s).
 //! \param ulIntType specifies the type of interrupt trigger mechanism.
 //!
 //! This function sets up the various interrupt trigger mechanisms for the
@@ -458,9 +558,10 @@ xGPIODirModeGet(unsigned long ulPort, unsigned long ulPin)
 //
 //*****************************************************************************
 void
-GPIOPinIntEnable(unsigned long ulPort, unsigned long ulBit,
+GPIOPinIntEnable(unsigned long ulPort, unsigned long ulPins,
                  unsigned long ulIntType)
 {
+    unsigned long ulBit;
     //
     // Check the arguments.
     //
@@ -468,20 +569,28 @@ GPIOPinIntEnable(unsigned long ulPort, unsigned long ulBit,
     xASSERT((ulIntType == GPIO_FALLING_EDGE) ||
             (ulIntType == GPIO_RISING_EDGE) || 
             (ulIntType == GPIO_BOTH_EDGES));
-
-    //
-    // Set the pin interrupt type.
-    //
-    xHWREG(AFIO_EXTICR1 + (ulBit>>2)) &= ~(AFIO_EXTICR1_EXTI0_M << (ulBit%4)*4);
-    xHWREG(AFIO_EXTICR1 + (ulBit>>2)) |= ((((ulPort)&0xFFFF) >> 10) << (ulBit%4)*4);
     
-    xHWREG(EXTI_RTSR) = ((ulIntType & 2) ?
-                         (xHWREG(EXTI_RTSR) | (1 << ulBit)) :
-                         (xHWREG(EXTI_RTSR) & ~(1 << ulBit)));
-    xHWREG(EXTI_FTSR) = ((ulIntType & 1) ?
-                         (xHWREG(EXTI_FTSR) | (1 << ulBit)) :
-                         (xHWREG(EXTI_FTSR) & ~(1 << ulBit)));
-    xHWREG(EXTI_IMR) |= (1 << ulBit);
+    for(ulBit = 0; ulBit < 16; ulBit++)
+    {
+        if(((ulPins >> ulBit) & 1) != 0)
+        { 
+            //
+            // Set the pin interrupt type.
+            //
+            xHWREG(AFIO_EXTICR1 + (ulBit>>2)*4) &= 
+                                 ~(AFIO_EXTICR1_EXTI0_M << (ulBit%4)*4);
+            xHWREG(AFIO_EXTICR1 + (ulBit>>2)*4) |= 
+                                 ((((ulPort&0xFFFF) >> 10) -2) << (ulBit%4)*4);
+            
+            xHWREG(EXTI_RTSR) = ((ulIntType & 2) ?
+                                 (xHWREG(EXTI_RTSR) | (1 << ulBit)) :
+                                 (xHWREG(EXTI_RTSR) & ~(1 << ulBit)));
+            xHWREG(EXTI_FTSR) = ((ulIntType & 1) ?
+                                 (xHWREG(EXTI_FTSR) | (1 << ulBit)) :
+                                 (xHWREG(EXTI_FTSR) & ~(1 << ulBit)));
+            xHWREG(EXTI_IMR) |= (1 << ulBit);
+        }
+    }
 }
 
 //*****************************************************************************
@@ -489,7 +598,7 @@ GPIOPinIntEnable(unsigned long ulPort, unsigned long ulBit,
 //! \brief Disables interrupts for the specified pin.
 //!
 //! \param ulPort is the base address of the GPIO port.
-//! \param ulBit is the bit-packed representation of the pin.
+//! \param ulPins is the bit-packed representation of the pin(s).
 //!
 //! Masks the interrupt for the specified pin.
 //!
@@ -497,7 +606,7 @@ GPIOPinIntEnable(unsigned long ulPort, unsigned long ulBit,
 //
 //*****************************************************************************
 void
-GPIOPinIntDisable(unsigned long ulPort, unsigned long ulBit)
+GPIOPinIntDisable(unsigned long ulPort, unsigned long ulPins)
 {
     //
     // Check the arguments.
@@ -507,7 +616,7 @@ GPIOPinIntDisable(unsigned long ulPort, unsigned long ulBit)
     //
     // Disable the interrupts.
     //
-    xHWREG(EXTI_IMR) &= ~(1 << ulBit);
+    xHWREG(EXTI_IMR) &= ~ulPins;
 }
 
 //*****************************************************************************
@@ -762,32 +871,43 @@ GPIOPinReset(unsigned long ulPort, unsigned long ulPins)
 void
 GPIOPinLockConfig(unsigned long ulPort, unsigned long ulPins)
 {
+    unsigned long ulTemp = GPIO_LCKR_KEY;
     //
     // Check the arguments.
     //
     xASSERT(GPIOBaseValid(ulPort));
-    unsigned long ulTemp = GPIO_LCKR_KEY;
-
+	
     //
-    // Set LCKK bit.
+    // Reset the LCKR
     //
+  	xHWREG(ulPort + GPIO_LCKR) &= ulTemp;  
+	
+	  //
+	  // Write the data
+	  //
+	  xHWREG(ulPort + GPIO_LCKR) = ulPins;
+	
+	  //
+	  // Write the LCKR 
+	  //
     xHWREG(ulPort + GPIO_LCKR) = (ulPins | ulTemp);
 
     //
     // Reset LCKK bit.
     //
-    xHWREG(ulPort + GPIO_LCKR) = (ulPins);
+	  xHWREG(ulPort + GPIO_LCKR) = ulPins;
 
     //
     // Set LCKK bit.
     //
-    xHWREG(ulPort + GPIO_LCKR) = (ulTemp);
+    xHWREG(ulPort + GPIO_LCKR) = (ulPins | ulTemp);;
 
     //
     // Read LCKK bit.
     //
     ulTemp = xHWREG(ulPort + GPIO_LCKR);
     ulTemp = xHWREG(ulPort + GPIO_LCKR);
+    
 }
 
 //*****************************************************************************
