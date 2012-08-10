@@ -355,7 +355,8 @@ void xuart002Execute_FIFOConfig(void)
         
     UARTFIFOEnable(UART_BASE);
     ulTemp1 = xHWREG(UART_BASE + UART_LCRH) & UART_LCRH_FEN;
-    TestAssert(ulTemp1 == UART_LCRH_FEN, "xuart API \"UARTFIFOEnable\" error!");
+    TestAssert(ulTemp1 == UART_LCRH_FEN, 
+                 "xuart API \"UARTFIFOEnable\" error!");
     //
     // test for rx trigger level config
     //
@@ -378,7 +379,8 @@ void xuart002Execute_SmartCard_Register(void)
     unsigned long ulRegVal;
     UARTSmartCardEnable(UART_BASE);
     ulRegVal = xHWREG(UART_BASE + UART_CTL) & UART_CTL_SMART;
-    TestAssert(ulRegVal == UART_CTL_SMART, "xuart API \"UARTSmartCardEnable\" error!");
+    TestAssert(ulRegVal == UART_CTL_SMART, 
+                  "xuart API \"UARTSmartCardEnable\" error!");
     
     UARTSmartCardDisable(UART_BASE);
     ulRegVal = xHWREG(UART_BASE + UART_CTL) & UART_CTL_SMART;

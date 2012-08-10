@@ -227,14 +227,14 @@ static void xTimer001Execute(void)
             xTimerCaptureModeSet(ulBase, TIMER_A, ulCaptureMode[j]);
             ulTemp = xHWREG(ulBase + TIMER_0_GPTMTAMR) & 0x0000000C;
             TestAssert((ulCaptureMode[j] & 0x0000000C) == ulTemp,
-                                             "xtiemr API \"TimerACaptureModeSet\" error!");  
+                         "xtiemr API \"TimerACaptureModeSet\" error!");  
         }
         for(j=3;j<6;j++)
         {
             xTimerCaptureModeSet(ulBase, TIMER_B, ulCaptureMode[j]);
             ulTemp = xHWREG(ulBase + TIMER_0_GPTMTBMR) & 0x0000000C;
             TestAssert(((ulCaptureMode[j] >> 8) & 0x0000000C) == ulTemp,
-                                             "xtiemr API \"TimerACaptureModeSet\" error!");
+                         "xtiemr API \"TimerACaptureModeSet\" error!");
         }
                 
         //
@@ -270,7 +270,7 @@ static void xTimer001Execute(void)
             TimerIntEnable(ulBase, TIMER_B, ulIntStatus[j]);
             ulTemp = (xHWREG(ulBase + TIMER_0_GPTMIMR) >> 8) & ulIntStatus[j];
             TestAssert(ulIntStatus[j] == ulTemp,
-                                             "xtiemr API \"TimerIntEnable\" error!");       
+                        "xtiemr API \"TimerIntEnable\" error!");       
         }
 #if 0                    
         //
@@ -280,8 +280,7 @@ static void xTimer001Execute(void)
         {
             TimerIntClear(ulBase, TIMER_B, ulIntStatus[j]);
             ulTemp = (xHWREG(ulBase + TIMER_0_GPTMMIS) >> 8) & ulIntStatus[j];
-            TestAssert(0 == ulTemp,
-                                             "xtiemr API \"TimerIntClear\" error!");        
+            TestAssert(0 == ulTemp, "xtiemr API \"TimerIntClear\" error!"); 			
         }
 #endif                    
         //
@@ -292,7 +291,7 @@ static void xTimer001Execute(void)
             TimerIntDisable(ulBase, TIMER_B, ulIntStatus[j]);
             ulTemp =  (xHWREG(ulBase + TIMER_0_GPTMIMR) >> 8) & ulIntStatus[j];
             TestAssert(0x00000000 == ulTemp,
-                                             "xtiemr API \"TimerIntDisable\" error!");  
+                             "xtiemr API \"TimerIntDisable\" error!");  
         }
                 
 #if 0                
