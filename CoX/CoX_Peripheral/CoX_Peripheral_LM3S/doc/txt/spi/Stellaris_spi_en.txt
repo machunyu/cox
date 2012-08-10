@@ -1,0 +1,149 @@
+//********************************************************************************
+//
+//! \defgroup Stellaris_SPI Stellaris SPI
+//!
+//! \brief Stellaris SPI Peripheral Driver
+//!
+//! The CoX Peripheral Library also provides APIs for full functions of Stellaris
+//! Stellaris SPI.This module supports the whole Stellaris Series.
+//!
+//! <br /> 
+//! <h1>Contents</h1>
+//! - \ref Stellaris_SPI_BLOCK
+//! - \ref Stellaris_SPI_Function_Desc
+//! - \ref Stellaris_SPI_API_Group
+//!   - \ref Stellaris_API_Group_Configure_Control
+//!   - \ref Stellaris_API_Group_Interrupt_Control
+//!   - \ref Stellaris_API_Group_TransferReceive_Control
+//!   .
+//! - \ref M051_SPI_Usage
+//! .
+//!
+//! <br />
+//! \section Stellaris_SPI_BLOCK 1. Spi Physical Block
+//! <img src="Stellaris_spi_block.png" />
+//!
+//! <br />
+//! \section Stellaris_SPI_Function_Desc 2. Functional Description
+//! The system control block has the following functions:
+//! - The SPI controller can be configured as a master or a slave device. In master 
+//!   mode It can  be set with different rate and data width and slave select mode. 
+//! - Each SPI controller can generate an individual interrupt when data transfer is finished, and the respective interrupt event flag IF will be set. The interrupt 
+//!   event flag will generates an interrupt to CPU if the interrupt enable bit IE.
+//! - The SPI controller can be set to different transfer and receive mode,including
+//!   normal transfer and receive mode, burst transfer and receive mode.At the same time, it is a synchronous serial data communication protocol which operates in 
+//!   full duplex mode.Devices communicate in master/slave mode with 4-wire bi-direction interface. 
+//! .
+//!
+//! <br />
+//! \subsection Stellaris_SPI_API_Group 3. API Groups
+//!
+//! The Spi API is broken into three groups of functions:
+//! - those that deal with SPI mode configure,
+//! - those that deal with SPI interrupt control,
+//! - those that deal with SPI transfer and receive controlling.
+//! .
+//! <br />
+//! \subsection Stellaris_API_Group_Configure_Control 3.1 SPI configuration control APIs
+//!
+//! - SSIConfigSetExpClk()
+//! - SSIDisable()
+//! - SSIEnable()
+//! - SSIDMAEnable()
+//! - SSIDMADisable()
+//! .
+//!
+//! <br />
+//! \subsection Stellaris_API_Group_Interrupt_Control 3.2 SPI Interrupt Control APIs
+//! - SSIIntClear()
+//! - SSIIntDisable()
+//! - SSIIntEnable()
+//! - SSIIntStatus()
+//! - SSIIntCallbackInit()
+//! .
+//!
+//! <br />
+//! \subsection Stellaris_API_Group_TransferReceive_Control 3.3 SPI Transfer&Receive Control
+//!
+//! - SSISingleDataReadWrite()
+//! - SSIBitLengthGet()
+//! - SSIDataGet()
+//! - SSIDataGetNonBlocking()
+//! - SSIDataPut()
+//! - SSIDataPutNonBlocking()
+//! - SSIDataRead()
+//! - SSIDataWrite()
+//! - SSIBusy()
+//! - SSIIsRxEmpty()
+//! - SSIIsRxFull()
+//! - SSIIsTxEmpty()
+//! - SSIIsTxFull()
+//! .
+//! <br />
+//! \section Stellaris_SPI_Usage 4 Program Examples
+//! The following example shows how to use the SPI APIs to configue SPI and to implement 
+//! the function of transferring and receiving. 
+//! \code
+//! #include "xhw_types.h"
+//! #include "xsysctl.h"
+//! #include "xhw_memmap.h"
+//! #include "xspi.h"
+//! #include "xhw_spi.h"
+//! #include "xgpio.h"
+//!
+//! unsigned char ucSendData[] = "Wonderful World!";
+//!
+//! //*****************************************************************************
+//!
+//! //Ininite the SPI and implement the function of data transmission.
+//!
+//! //param None
+//!
+//! //This function is to ininite the SPI and implement the function of data transmission.
+//!
+//! //return none
+//!
+//! //*****************************************************************************
+//! void SpiInitAndTransfer(void)
+//! {
+//!
+//!    	//
+//!    	// Step 1, Set SysClk 50MHz using Extern 12M oscillator
+//!    	//
+//!    	SysCtlClockSet(50000000, SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ | SYSCTL_USE_PLL);
+//!
+//!    	//
+//!    	// Step 2, Enable Peripheral SPI0
+//!    	//
+//!    	SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);;
+//! 
+//!    	//
+//!    	// Step 3, you should configures a pin for use as a SPI function
+//!    	//
+//!    	xSPinTypeSPI(SPI0CLK, PA2);
+//!	   	xSPinTypeSPI(SPI0CS, PA3);
+//!		xSPinTypeSPI(SPI0RX, PA4);
+//!		xSPinTypeSPI(SPI0TX, PA5);
+//!
+//!    //
+//!    // Step 4, you should configure MCU as a master or slave device , data width 
+//!    // MSB or LSB first and Mode
+//!    //
+//!    SPIConfigSet(xSPI0_BASE, 100000, xSPI_MOTO_FORMAT_MODE_0 |
+//!                                            xSPI_MODE_MASTER | 
+//!                                            xSPI_DATA_WIDTH8);
+//!    //
+//!    // Step 5, you should enable the ssi0.
+//!    //
+//!    SSIEnable(xSPI0_BASE); 
+//!     
+//!    //
+//!    // Step 6, you can transfer data right now.
+//!    //
+//!    SPIDataWrite(xSPI0_BASE, ucSendData, 16);
+//!  }
+//!
+//! \endcode
+//! \note 
+//!
+//**********************************************************************************

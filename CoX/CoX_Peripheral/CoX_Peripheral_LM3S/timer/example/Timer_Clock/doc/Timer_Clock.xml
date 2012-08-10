@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<Example>
+  <Name>Timer_Clock</Name>
+  <Description>This example is to configure the TIEMR0 as periodic mode, enable
+  the interrupt, when the counter run over,the TIMER time out interrupt will happen.
+  </Description>
+  <Version>1.0.0</Version>
+  <Tags>TIMER</Tags>
+  <EVKit>LM3S9B96 REV 1.0 2012-08-16 Development Board</EVKit>
+  
+  <Files>
+    <File>$REPO_ROOT$\CoX\CoX_Peripheral\CoX_Peripheral_LM3S\timer\example\Timer_Clock\src\OneSecondClock.c</File>
+  </Files>
+  
+  <Dependencys>
+    <Dependency>COX.Peripheral.LM3S.xStartup</Dependency>
+    <Dependency>COX.Peripheral.LM3S.xLowLayer</Dependency>
+	<Dependency>COX.Peripheral.LM3S.xCORE</Dependency>
+	<Dependency>COX.Peripheral.LM3S.xSysCtl</Dependency>
+	<Dependency>COX.Peripheral.LM3S.xGPIO</Dependency>
+  </Dependencys>
+  
+   
+</Example>

@@ -1,0 +1,227 @@
+//********************************************************************************
+//
+//! \defgroup Stellaris_SysCtl Stellaris SysCtl
+//!
+//! \brief Stellaris SysCtl Peripheral Driver
+//! 
+//! The CoX Peripheral Library also provide APIs for function full functions of
+//! Nuvoton Stellaris SysCtl.This module supports the whole Stellaris Series.
+//!
+//! <br />
+//! <h1>Contents</h1>
+//! - \ref Stellaris_SysCtl_Block
+//! - \ref Stellaris_SysCtl_Function_Desc
+//! - \ref Stellaris_SysCtl_API_Group
+//!   - \ref Stellaris_API_Group_Peripharal_Control
+//!   - \ref Stellaris_API_Group_Clock_Control
+//!   - \ref Stellaris_API_Group_Power_Control
+//!   - \ref Stellaris_API_Group_Interrupt_Control
+//!   .
+//! - \ref Stellaris_SysCtl_Usage
+//! .
+//!
+//! <br />
+//! \section Stellaris_SysCtl_Block 1. SysCtl Physical Block
+//! <img src="Stellaris_sysctl_block.png" />
+//!
+//! <br />
+//! \section Stellaris_SysCtl_Function_Desc 2. Functional Description
+//! The system control block has the following functions:
+//! - The perpheral can be individual enable,disable and reset by software
+//! - The clock controller generates the clocks for the whole chip, including 
+//!   system clocks and all peripheral clocks.The clock generator consists of
+//!   5 clock sources which are listed below:One external 3.57~16.38 MHz high 
+//!   speed crystal;One programmable,PLL FOUT One internal 16 MHz high speed 
+//!   oscillator ;One internal 30 kHz low speed oscillator. 
+//! - When chip enters into power down mode, system clocks, some clock sources, 
+//!   and some peripheral clocks will be disabled. Some clock sources,peripherals 
+//!   clock are still active in power down mode.
+//! .
+//!
+//! <br />
+//! \subsection Stellaris_SysCtl_API_Group 2. API Groups
+//!
+//! The SysCtl API is broken into three groups of functions:
+//! - those that deal with Clock control,
+//! - those that deal with Peripheral control,
+//! - those that deal with Power control,
+//! - those that deal with Interrupt control,
+//! .
+//! 
+//! <br />
+//! \subsection Stellaris_API_Group_Clock_Control 2.1 SysCtl clock control
+//! 
+//! The SysCtl clock control are dealed with : 
+//! - SysCtlClockSet(),
+//! - SysCtlClockGet(),
+//! - SysCtlPWMClockSet(),
+//! - SysCtlPWMClockGet(),
+//! - SysCtlADCSpeedSet(),
+//! - SysCtlADCSpeedGet(),
+//! - SysCtlUSBPLLEnable(),
+//! - SysCtlUSBPLLDisable(),
+//! - SysCtlI2SMClkSet().
+//! .
+//!
+//! <br />
+//! \subsection Stellaris_API_Group_Peripharal_Control 2.2 SysCtl Peripharal Control APIs
+//! The SysCtl clock control are dealed with :
+//! - SysCtlPeripheralPresent(),
+//! - SysCtlPeripheralDisable(),
+//! - SysCtlPeripheralEnable(),
+//! - SysCtlPeripheralReset(),
+//! - SysCtlPeripheralSleepEnable(),
+//! - SysCtlPeripheralSleepDisable(),
+//! - SysCtlPeripheralDeepSleepEnable(),
+//! - SysCtlPeripheralDeepSleepDisable(),
+//! - SysCtlPeripheralClockGating(),
+//! - SysCtlGPIOAHBEnable(),
+//! - SysCtlGPIOAHBDisable(),
+//! - SysCtlResetCauseGet(),
+//! - SysCtlResetCauseClear().
+//! .
+//!
+//! <br />
+//! \subsection Stellaris_API_Group_Power_Control 2.3 SysCtl power control
+//! 
+//! The SysCtl power control are dealed with : 
+//! - SysCtlSleep(),
+//! - SysCtlDeepSleep(),
+//! - SysCtlReset(),
+//! - SysCtlLDOSet(),
+//! - SysCtlLDOGet(),
+//! - SysCtlLDOConfigSet().
+//! .
+//!
+//! <br />
+//! \subsection Stellaris_API_Group_Interrupt_Control 2.4 SysCtl interrupt control
+//! 
+//! The SysCtl interrupt control are dealed with : 
+//! - SysCtlIntEnable(),
+//! - SysCtlIntDisable(),
+//! - SysCtlIntClear(),
+//! - SysCtlIntStatus(),
+//! - SysCtlLDOConfigSet().
+//! .
+//!
+//! <br />
+//! \section Stellaris_SysCtl_Usage
+//! The following example shows how to use the SysCtl API to configure the
+//! system clock,enable the relative peripheral,put the processor into sleep
+//! mode,and then wake up by GPIO Interrupt (PJ7);
+//! \code
+//! #include "xhw_types.h"
+//! #include "xhw_memmap.h"
+//! #include "xcore.h"
+//! #include "xhw_ints.h"
+//! #include "xhw_nvic.h"
+//! #include "xhw_sysctl.h"
+//! #include "xsysctl.h"
+//! #include "xhw_gpio.h"
+//! #include "xgpio.h"
+//! #include "xhw_uart.h"
+//! #include "xuart.h"
+//!
+//! //*****************************************************************************
+//! //
+//! // Enter Sleep Mode function.
+//! // This function will force the processor enter sleep mode.
+//! //
+//! //*****************************************************************************
+//! void PWRCtl_Standby(void)
+//! {
+//!     //
+//!     // Enter Puts the processor into deep-sleep mode.
+//!     //
+//!     SysCtlDeepSleep();
+//!    
+//! }
+//! //*****************************************************************************
+//! //
+//! // brief Init uart to print.
+//! //
+//! // details uart config as (115200, 8 data bit, 1 stop bit , no partiy)
+//! //
+//! //*****************************************************************************
+//! 
+//! void TestIOInit(void)
+//! {
+//!     //
+//!     // Set system clock
+//!     //
+//!     SysCtlClockSet(	SYSCTL_SYSDIV_1 	| 	
+//!						SYSCTL_USE_OSC	 	|		
+//!						SYSCTL_XTAL_16MHZ	|  	
+//!						SYSCTL_OSC_MAIN);			
+//!
+//!		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+//!
+//!     xSPinTypeUART(UART0RX,PA0);
+//!     xSPinTypeUART(UART0TX,PA1);
+//!
+//!     xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART0);
+//!     xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART0);
+//!
+//!
+//!     xUARTConfigSet(UART0_BASE,115200,xUART_CONFIG_WLEN_8 | xUART_CONFIG_STOP_1
+//!                                                          | xUART_CONFIG_PAR_NONE));
+//!		UARTEnable(UART0_BASE, (UART_BLOCK_UART | UART_BLOCK_TX | UART_BLOCK_RX));
+//!     xSysCtlDelay(10000);
+//! }
+//! //*****************************************************************************
+//! //
+//! // brief print a char.
+//! //
+//! // param A char
+//! //
+//! // return None.
+//! //
+//! //*****************************************************************************
+//! void TestIOPut(char ch)
+//! {
+//!     while((xHWREG(UART_BASE + UART_FR) & UART_FR_TXFF);
+//!     //
+//!     // Write this character to the transmit FIFO.
+//!     //
+//!     xHWREG(UART_BASE + UART_DR) = ch;
+//! }
+//! 
+//! //*****************************************************************************
+//! //
+//! // Wake up mcu from sleep mode function using extern interrupt.
+//! //
+//! // This function use extern interrupt to wake up mcu from sleep mode 
+//! //
+//! // return None
+//! //*****************************************************************************
+//! void PWR_WKUP_Init(void)
+//! {	 
+//!     xIntEnable(xINT_GPIOJ);
+//!     xIntPrioritySet(xINT_GPIOJ, 1);
+//!     xGPIOSPinTypeGPIOInput(PJ7);;
+//!     xGPIOPinIntEnable(xGPIO_PORTJ_BASE, xGPIO_PIN_7, xGPIO_FALLING_EDGE);
+//! }
+//! //*****************************************************************************
+//! //
+//! // The main function of the PWR_WKUP 
+//! //
+//! //*****************************************************************************
+//! int main(void)
+//! {
+//!     //
+//!     //UART initialize
+//!     //          
+//!     TestIOInit();
+//!     PWR_WKUP_Init();
+//!
+//!     while(1)
+//!     {
+//!        PWRCtl_Standby();
+//!        TestIOPut('O');
+//!        TestIOPut('K');	
+//!     }  
+//! }
+//! \endcode
+//! \note 
+//!
+//********************************************************************************

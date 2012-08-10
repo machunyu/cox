@@ -1,0 +1,209 @@
+//*****************************************************************************
+//
+//! \defgroup Stellaris_TIMER Stellaris TIMER
+//! 
+//! \brief TI Stellaris TIMER Peripheral Driver.
+//!
+//! The CoX Peripheral Library also provides APIs for full functions of TI
+//! Stellaris TIMER. This module supports the whole Stellaris Series.
+//!
+//! <br />
+//! <h1>Contents</h1>
+//! - \ref Stellaris_TIMER_Blcok
+//! - \ref Stellaris_TIMER_Function_Desc
+//! - \ref Stellaris_TIMER_API_Group
+//!   - \ref TIMER_API_Mode_Config
+//!   - \ref TIMER_API_Start_Stop
+//!   - \ref TIMER_API_Event_Counting
+//!   - \ref TIMER_API_Capture
+//!   - \ref TIMER_API_Value_Set
+//!   - \ref TIMER_API_Inerrupt
+//!   .
+//! - \ref Stellaris_TIMER_Usage
+//! .
+//!
+//! <br />
+//! \section Stellaris_TIMER_Blcok 1. TIMER Physical Block
+//! <img src="Stellaris_Timer_Controller_Block.png" />
+//! 
+//! <br />
+//! \section Stellaris_TIMER_Function_Desc 2. Functional Description
+//! 
+//! There are six mode that the timer can be configured:
+//! 
+//! - One shot mode:
+//!
+//! When timer is operated at one-shot mode, the timer begins counting up from 0 or down 
+//! its preloaded value (GPTMTnMR) , if TnTOIM (GPTMIMR[0] or GPTMIMR[8]interrupt 
+//! enable bit) is set to 1, then the timer interrupt flag is set and the interrupt  
+//! signal is generated and sent to NVIC to inform CPU.Timer counting operation stops.
+//!
+//! - Periodic Mode:
+//!
+//! If timer is operated at period mode, the timer begins counting up from 0 or down 
+//! its preloaded value (GPTMTnMR) , if TnTOIM (GPTMIMR[0] or GPTMIMR[8]interrupt 
+//! enable bit) is set to 1, then the timer interrupt flag is set and the interrupt  
+//! signal is generated and sent to NVIC to inform CPU. the timer counter value goes 
+//! back to counting initial value on the next cycle. The timer counter operates 
+//! counting again.
+//!
+//! - Toggle Mode:
+//!
+//! If timer is used to operated at toggle mode, the timer must be operated at input 
+//! edge-time mode.In edge-time mode, the timer is configured as 16-bit down-counter.
+//! the timer is initialized to the value loaded in the GPTMTnILR.
+//! if TnOTE (GTMCTL[29]  enable bit) is set to 1, the ADC trigger is enabled.the uDMA
+//! trigger is enabled by configuring and enabling the appropriate uDMA channel.
+//!
+//! - Continuous Counting Mode:
+//!
+//! the timer can not be configured as this mode.
+//!
+//! 
+//! - Input Capture Function:
+//!
+//! It also provide input capture function to capture count or capture time. 
+//!
+//! <br />
+//! \section Stellaris_TIMER_API_Group 3. Stellaris TIMER API Group
+//!
+//! <br />
+//! \subsection TIMER_API_Mode_Config 3.1 TIMER API Mode Config
+//! 
+//! The TIMER mode are configured with:
+//! - TimerInitConfig()
+//! - TimerControlLevel(),
+//! - TimerControlTrigger(),
+//! - TimerControlEvent(),
+//! - TimerControlStall(),
+//! - TimerControlWaitOnTrigger().
+//! .
+//! 
+//! <br />
+//! \subsection TIMER_API_Start_Stop 3.2 TIMER API Start Stop
+//! 
+//! The TIMER start or stop handled with: 
+//! - TimerStart(),
+//! - TimerStop()
+//! .
+//!
+//! <br />
+//! \subsection TIMER_API_Event_Counting 3.3 TIMER API Event Counting
+//! 
+//! The TIMER event counting is accessed with:
+//! - TimerCounterEnable(),
+//! - TimerCounterDisable(),
+//! - TimerCounterDetectPhaseSelect().
+//! .
+//! 
+//! <br />
+//! \subsection TIMER_API_Capture 3.4 TIMER API Capture
+//!
+//! The TIMER capture is accessed with:
+//! - TimerCaptureEnable(),
+//! - TimerCaptureDisable(),
+//! - TimerCaptureModeSet(),
+//! - TimerCaptureEdgeSelect().
+//! .
+//!
+//! <br />
+//! \subsection TIMER_API_Value_Set 3.5 TIMER API Value Set
+//!
+//! Some value register are accessed with:
+//! - TimerPrescaleSet(),
+//! - TimerPrescaleGet(),
+//! - TimerLoadSet(),
+//! - TimerLoadGet(),
+//! - TimerValueGet(),
+//! - TimerMatchSet(),
+//! - TimerMatchGet()
+//! .
+//!
+//! <br />
+//! \subsection TIMER_API_Inerrupt 3.6 TIMER API Inerrupt
+//!
+//! Timer interrupt are handed with:
+//! - TimerIntCallbackInit(),
+//! - TimerIntEnable(),
+//! - TimerIntDisable(),
+//! - TimerIntClear(), 
+//! - TimerIntMaskStatus(),
+//! - TimerIntRawStatus().
+//! .
+//! 
+//! <br />
+//! \section Stellaris_TIMER_Usage 4. Usage & Program Examples
+//!
+//! \code
+//!
+//! //*****************************************************************************
+//! //
+//! // \file one_second_clock.c
+//! // \brief Use the timer to make a one second clock.
+//! // \date 1/10/2012
+//! // \author CooCox
+//! //
+//! // The timer source select external 16M hz crystal oscillator.
+//! //
+//! //*****************************************************************************
+//! #include "xhw_types.h"
+//! #include "xcore.h"
+//! #include "xhw_ints.h"
+//! #include "xhw_memmap.h"
+//! #include "xhw_nvic.h"
+//! #include "xgpio.h"
+//! #include "xsysctl.h"
+//! #include "xtimer.h"
+//!
+//! //*****************************************************************************
+//! //
+//! // \biref The main example function
+//! //
+//! // \return  none
+//! //
+//! //*****************************************************************************
+//! void OneSecondClock(void)
+//! {    
+//!     //
+//!     // Set system clock
+//!     //
+//!     xSysCtlClockSet(	SYSCTL_SYSDIV_1 	| 	
+//!							SYSCTL_USE_OSC	 	|	
+//!							SYSCTL_XTAL_16MHZ	|  	
+//!							SYSCTL_OSC_MAIN);	
+//!     
+//!     // 
+//!     // Enable tiemr0
+//!     // 
+//!     xSysCtlPeripheralEnable(xSYSCTL_PERIPH_TMR0);
+//!     
+//!     //
+//!     // Clear the flag first
+//!     //
+//!     TimerIntClear(xTIMER0_BASE, TIMER_BOTH, xTIMER_INT_TIMEOUT);
+//!     
+//!     // 
+//!     // Configure Timer0 as periodic mode, t = 1s
+//!     //        
+//!     xTimerInitConfig(xTIMER0_BASE, TIMER_BOTH, xTIMER_MODE_PERIODIC, 1);
+//!     xTimerIntEnable(xTIMER0_BASE, TIMER_BOTH, xTIMER_INT_TIMEOUT);
+//!     
+//!     //
+//!     // Start the timer
+//!     //
+//!     xTimerStart(xTIMER0_BASE, TIMER_BOTH);
+//!
+//!     while(1)
+//!     {
+//!         //
+//!         // wait until the timer data register reach equel to compare register
+//!         //
+//!         while(!xTimerIntStatus(xTIMER0_BASE, TIMER_BOTH, xTIMER_INT_TIMEOUT));
+//!         TimerIntClear(xTIMER0_BASE, xTIMER_INT_TIMEOUT);
+//!     }  
+//! }
+//!
+//! \endcode
+//!
+//
+//*****************************************************************************

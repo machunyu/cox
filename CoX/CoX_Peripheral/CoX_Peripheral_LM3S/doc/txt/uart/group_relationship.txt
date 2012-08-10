@@ -1,0 +1,46 @@
+//******************************************************
+//
+//!
+//! \addtogroup UART
+//! @{
+//! \addtogroup Stellaris_UART_Register 
+//! @{
+//! @}
+//! \addtogroup xUART
+//! @{
+//! @}
+//! \addtogroup Stellaris_UART
+//! @{
+//! @}
+//! \addtogroup xUART_Apps
+//! @{
+//! @}
+//! @}
+//
+//******************************************************
+
+//******************************************************
+//
+//! \addtogroup UART
+//! @{
+//! \addtogroup xUART_Apps
+//! @{
+//! \addtogroup xUART_App_NormalMode
+//! @{
+//! @}
+//! \addtogroup xUART_App_IrDA
+//! @{
+//! @}
+//! \addtogroup xUART_App_Modem
+//! @{
+//! @}
+//! \addtogroup xUART_App_LIN
+//! @{
+//! @}
+//! \addtogroup xUART_App_SmartCard
+//! @{
+//! @}
+//! @}
+//! @}
+//
+//******************************************************

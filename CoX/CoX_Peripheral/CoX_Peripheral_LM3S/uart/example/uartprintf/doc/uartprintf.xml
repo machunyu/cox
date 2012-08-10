@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<Example>
+  <Name>uartprintf</Name>
+  <Description>Use UART0 to print some characters to terminal.Step 1: You should 
+    set system clock and enable the uart. Step 2: You should set multiplex GPIO 
+    and UART clock source. Step 3: You should configure UART. Step 4: You should
+    send data to FIFO.
+  </Description>
+  <Version>1.0.0</Version>
+  <Tags>UART</Tags>
+  <EVKit>LM3S9B96 REV 1.0 2012-08-16 Development Board</EVKit>
+  
+  <Files>
+    <File>$REPO_ROOT$\CoX\CoX_Peripheral\CoX_Peripheral_LM3S\uart\example\uartprintf\src\UartPrintf.c</File>
+  </Files>
+  
+  <Dependencys>
+    <Dependency>COX.Peripheral.LM3S.xStartup</Dependency>
+    <Dependency>COX.Peripheral.LM3S.xLowLayer</Dependency>
+	<Dependency>COX.Peripheral.LM3S.xCORE</Dependency>
+	<Dependency>COX.Peripheral.LM3S.xSysCtl</Dependency>
+	<Dependency>COX.Peripheral.LM3S.xGPIO</Dependency>
+  </Dependencys>
+  
+   
+</Example>
