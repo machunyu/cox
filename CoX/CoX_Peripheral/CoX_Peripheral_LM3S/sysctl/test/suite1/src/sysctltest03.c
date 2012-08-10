@@ -48,14 +48,14 @@
 static unsigned long ulSleepSYSCTL_PERIPH[] = { 
 SYSCTL_PERIPH_WDOG0, SYSCTL_PERIPH_CAN0, SYSCTL_PERIPH_PWM, SYSCTL_PERIPH_ADC0,
 SYSCTL_PERIPH_TIMER0, SYSCTL_PERIPH_TIMER1, SYSCTL_PERIPH_TIMER2, SYSCTL_PERIPH_TIMER3,
-SYSCTL_PERIPH_COMP0, SYSCTL_PERIPH_I2C0, SYSCTL_PERIPH_QEI0, SYSCTL_PERIPH_QEI1,	
+SYSCTL_PERIPH_COMP0, SYSCTL_PERIPH_I2C0, SYSCTL_PERIPH_QEI0, SYSCTL_PERIPH_QEI1,    
 SYSCTL_PERIPH_SSI0, SYSCTL_PERIPH_UART0, SYSCTL_PERIPH_UART1, SYSCTL_PERIPH_ETH,
 SYSCTL_PERIPH_IEEE1588};
 
 static unsigned long ulDeepSleepSYSCTL_PERIPH[] = { 
 SYSCTL_PERIPH_WDOG0, SYSCTL_PERIPH_CAN0, SYSCTL_PERIPH_PWM, SYSCTL_PERIPH_ADC0,
 SYSCTL_PERIPH_TIMER0, SYSCTL_PERIPH_TIMER1, SYSCTL_PERIPH_TIMER2, SYSCTL_PERIPH_TIMER3,
-SYSCTL_PERIPH_COMP0, SYSCTL_PERIPH_I2C0, SYSCTL_PERIPH_QEI0, SYSCTL_PERIPH_QEI1,	
+SYSCTL_PERIPH_COMP0, SYSCTL_PERIPH_I2C0, SYSCTL_PERIPH_QEI0, SYSCTL_PERIPH_QEI1,    
 SYSCTL_PERIPH_SSI0, SYSCTL_PERIPH_UART0, SYSCTL_PERIPH_UART1, SYSCTL_PERIPH_ETH,
 SYSCTL_PERIPH_IEEE1588};
 //*****************************************************************************
@@ -96,19 +96,19 @@ static void xSysctl004TearDown(void)
     unsigned long ulTemp;
     ulTemp = SYSCTL_SYSDIV_1|SYSCTL_XTAL_8MHZ|SYSCTL_OSC_MAIN | SYSCTL_USE_OSC;
     SysCtlClockSet(ulTemp);
-	
-		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);//开启GPIOA时钟
-	
-		xSPinTypeUART(UART0RX, PA0);
-		xSPinTypeUART(UART0TX, PA1);
-	
-		xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART0);
-		xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART0);					//打开串口0时钟
-	
-		UARTConfigSetExpClk(UART0_BASE, 115200, (UART_CONFIG_WLEN_8 	| 
-                                             UART_CONFIG_STOP_1	 	| 
+    
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);//开启GPIOA时钟
+    
+    xSPinTypeUART(UART0RX, PA0);
+    xSPinTypeUART(UART0TX, PA1);
+    
+    xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART0);
+    xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART0);                    //打开串口0时钟
+    
+    UARTConfigSetExpClk(UART0_BASE, 115200, (UART_CONFIG_WLEN_8     | 
+                                             UART_CONFIG_STOP_1     | 
                                              UART_CONFIG_PAR_NONE));
-		UARTEnable(UART0_BASE, (UART_BLOCK_UART | UART_BLOCK_TX | UART_BLOCK_RX));
+    UARTEnable(UART0_BASE, (UART_BLOCK_UART | UART_BLOCK_TX | UART_BLOCK_RX));
 }
 
 //*****************************************************************************
@@ -120,108 +120,108 @@ static void xSysctl004TearDown(void)
 //*****************************************************************************
 void xsysctl_SysCtlPeripheralSleepMode_test()
 {
-		unsigned long ulRegVal, ulTemp, i;
-		
-		// enter the sleep mode
-		xHWREG(SYSCTL_RCC) &= ~SYSCTL_RCC_ACG;
-		
-		//
-		// 	Enable sleep mode
-		//
-		for(i = 0;i < 4;i++)
-		{
-				ulTemp = ulSleepSYSCTL_PERIPH[i];
-				SysCtlPeripheralSleepEnable(ulTemp);
-				ulRegVal = xHWREG(SYSCTL_SCGC0);
-				if(ulTemp & 0x00100000)
-				{
-						ulTemp = ulTemp << 16;
-				}
-				else
-				{
-						ulTemp = ulTemp & 0x0FFFFFFF;
-				}
+    unsigned long ulRegVal, ulTemp, i;
+        
+    // enter the sleep mode
+    xHWREG(SYSCTL_RCC) &= ~SYSCTL_RCC_ACG;
+        
+    //
+    //     Enable sleep mode
+    //
+    for(i = 0;i < 4;i++)
+    {
+        ulTemp = ulSleepSYSCTL_PERIPH[i];
+        SysCtlPeripheralSleepEnable(ulTemp);
+        ulRegVal = xHWREG(SYSCTL_SCGC0);
+        if(ulTemp & 0x00100000)
+        {
+            ulTemp = ulTemp << 16;
+        }
+        else
+        {
+            ulTemp = ulTemp & 0x0FFFFFFF;
+        }
         TestAssert((ulTemp == (ulRegVal & ulTemp)), "xsysctl API error!"); 
-		}
-		for(i = 4;i < 15;i++)
-		{
-				ulTemp = ulSleepSYSCTL_PERIPH[i];
-				SysCtlPeripheralSleepEnable(ulTemp);
-				ulRegVal = xHWREG(SYSCTL_SCGC1);
-				if(ulTemp & 0x00100000)
-				{
-						ulTemp = ulTemp << 16;
-				}
-				else
-				{
-						ulTemp = ulTemp & 0x0FFFFFFF;
-				}
+    }
+    for(i = 4;i < 15;i++)
+    {
+        ulTemp = ulSleepSYSCTL_PERIPH[i];
+        SysCtlPeripheralSleepEnable(ulTemp);
+        ulRegVal = xHWREG(SYSCTL_SCGC1);
+        if(ulTemp & 0x00100000)
+        {
+            ulTemp = ulTemp << 16;
+        }
+        else
+        {
+            ulTemp = ulTemp & 0x0FFFFFFF;
+        }
         TestAssert((ulTemp == (ulRegVal & ulTemp)), "xsysctl API error!"); 
-		}
-		for(i = 15;i < 17;i++)
-		{
-				ulTemp = ulSleepSYSCTL_PERIPH[i];
-				SysCtlPeripheralSleepEnable(ulTemp);
-				ulRegVal = xHWREG(SYSCTL_SCGC2);
-				if(ulTemp & 0x00100000)
-				{
-						ulTemp = ulTemp << 16;
-				}
-				else
-				{
-						ulTemp = ulTemp & 0x0FFFFFFF;
-				}
+    }
+    for(i = 15;i < 17;i++)
+    {
+        ulTemp = ulSleepSYSCTL_PERIPH[i];
+        SysCtlPeripheralSleepEnable(ulTemp);
+        ulRegVal = xHWREG(SYSCTL_SCGC2);
+        if(ulTemp & 0x00100000)
+        {
+            ulTemp = ulTemp << 16;
+        }
+        else
+        {
+            ulTemp = ulTemp & 0x0FFFFFFF;
+        }
         TestAssert((ulTemp == (ulRegVal & ulTemp)), "xsysctl API error!"); 
-		}
-		
-		//
-		// Disable sleep mode
-		//
-		for(i = 0;i < 4;i++)
-		{
-				ulTemp = xHWREG(SYSCTL_SCGC0);
-				SysCtlPeripheralSleepDisable(ulSleepSYSCTL_PERIPH[i]);
-				if(ulSleepSYSCTL_PERIPH[i] & 0x00100000)
-				{
-						ulTemp &= ~(ulSleepSYSCTL_PERIPH[i] << 16);
-				}
-				else
-				{
-						ulTemp &= ~(ulSleepSYSCTL_PERIPH[i] & 0x0FFFFFFF);
-				}
+    }
+        
+    //
+    // Disable sleep mode
+    //
+    for(i = 0;i < 4;i++)
+    {
+        ulTemp = xHWREG(SYSCTL_SCGC0);
+        SysCtlPeripheralSleepDisable(ulSleepSYSCTL_PERIPH[i]);
+        if(ulSleepSYSCTL_PERIPH[i] & 0x00100000)
+        {
+            ulTemp &= ~(ulSleepSYSCTL_PERIPH[i] << 16);
+        }
+        else
+        {
+            ulTemp &= ~(ulSleepSYSCTL_PERIPH[i] & 0x0FFFFFFF);
+        }
         ulRegVal = xHWREG(SYSCTL_SCGC0); 
-				TestAssert(ulRegVal == ulTemp,"xsysctl scgc0 API error!");
-		}
-		for(i = 4;i < 15;i++)
-		{
-				ulTemp = xHWREG(SYSCTL_SCGC1);
-				SysCtlPeripheralSleepDisable(ulSleepSYSCTL_PERIPH[i]);
-				if(ulSleepSYSCTL_PERIPH[i] & 0x00100000)
-				{
-						ulTemp &= ~(ulSleepSYSCTL_PERIPH[i] << 16);
-				}
-				else
-				{
-						ulTemp &= ~(ulSleepSYSCTL_PERIPH[i] & 0x0FFFFFFF);
-				}
+        TestAssert(ulRegVal == ulTemp,"xsysctl scgc0 API error!");
+    }
+    for(i = 4;i < 15;i++)
+    {
+        ulTemp = xHWREG(SYSCTL_SCGC1);
+        SysCtlPeripheralSleepDisable(ulSleepSYSCTL_PERIPH[i]);
+        if(ulSleepSYSCTL_PERIPH[i] & 0x00100000)
+        {
+            ulTemp &= ~(ulSleepSYSCTL_PERIPH[i] << 16);
+        }
+        else
+        {
+            ulTemp &= ~(ulSleepSYSCTL_PERIPH[i] & 0x0FFFFFFF);
+        }
         ulRegVal = xHWREG(SYSCTL_SCGC1); 
-				TestAssert(ulRegVal == ulTemp,"xsysctl scgc1 API error!");
-		}
-		for(i = 15;i < 17;i++)
-		{
-				ulTemp = xHWREG(SYSCTL_SCGC2);
-				SysCtlPeripheralSleepDisable(ulSleepSYSCTL_PERIPH[i]);
-				if(ulSleepSYSCTL_PERIPH[i] & 0x00100000)
-				{
-						ulTemp &= ~(ulSleepSYSCTL_PERIPH[i] << 16);
-				}
-				else
-				{
-						ulTemp &= ~(ulSleepSYSCTL_PERIPH[i] & 0x0FFFFFFF);
-				}
+        TestAssert(ulRegVal == ulTemp,"xsysctl scgc1 API error!");
+    }
+    for(i = 15;i < 17;i++)
+    {
+        ulTemp = xHWREG(SYSCTL_SCGC2);
+        SysCtlPeripheralSleepDisable(ulSleepSYSCTL_PERIPH[i]);
+        if(ulSleepSYSCTL_PERIPH[i] & 0x00100000)
+        {
+            ulTemp &= ~(ulSleepSYSCTL_PERIPH[i] << 16);
+        }
+        else
+        {
+            ulTemp &= ~(ulSleepSYSCTL_PERIPH[i] & 0x0FFFFFFF);
+        }
         ulRegVal = xHWREG(SYSCTL_SCGC2); 
-				TestAssert(ulRegVal == ulTemp,"xsysctl scgc2 API error!"); 
-		}
+        TestAssert(ulRegVal == ulTemp,"xsysctl scgc2 API error!"); 
+    }
 }
 
 //*****************************************************************************
@@ -233,10 +233,10 @@ void xsysctl_SysCtlPeripheralSleepMode_test()
 //*****************************************************************************
 void xsysctl_SysCtlPeripheralDeepSleepClock_test()
 {
-		// enter the sleep mode
-//		xHWREG(SYSCTL_RCC) &= ~SYSCTL_RCC_ACG;
-	
-//		xHWREG(SYSCTL_DSLPCLKCFG) |= 
+        // enter the sleep mode
+//        xHWREG(SYSCTL_RCC) &= ~SYSCTL_RCC_ACG;
+    
+//        xHWREG(SYSCTL_DSLPCLKCFG) |= 
 }
 //*****************************************************************************
 //
@@ -247,108 +247,108 @@ void xsysctl_SysCtlPeripheralDeepSleepClock_test()
 //*****************************************************************************
 void xsysctl_SysCtlPeripheralDeepSleepMode_test()
 {
-		unsigned long ulRegVal, ulTemp, i;
-		
-		// enter the sleep mode
-		xHWREG(SYSCTL_RCC) &= ~SYSCTL_RCC_ACG;
-		
-		//
-		// 	Enable deep sleep mode
-		//
-		for(i = 0;i < 4;i++)
-		{
-				ulTemp = ulSleepSYSCTL_PERIPH[i];
-				SysCtlPeripheralDeepSleepEnable(ulTemp);
-				ulRegVal = xHWREG(SYSCTL_DCGC0);
-				if(ulTemp & 0x00100000)
-				{
-						ulTemp = ulTemp << 16;
-				}
-				else
-				{
-						ulTemp = ulTemp & 0x0FFFFFFF;
-				}
+    unsigned long ulRegVal, ulTemp, i;
+        
+    // enter the sleep mode
+    xHWREG(SYSCTL_RCC) &= ~SYSCTL_RCC_ACG;
+        
+    //
+    //     Enable deep sleep mode
+    //
+    for(i = 0;i < 4;i++)
+    {
+        ulTemp = ulSleepSYSCTL_PERIPH[i];
+        SysCtlPeripheralDeepSleepEnable(ulTemp);
+        ulRegVal = xHWREG(SYSCTL_DCGC0);
+        if(ulTemp & 0x00100000)
+        {
+            ulTemp = ulTemp << 16;
+        }
+        else
+        {
+            ulTemp = ulTemp & 0x0FFFFFFF;
+        }
         TestAssert((ulTemp == (ulRegVal & ulTemp)), "xsysctl API error!"); 
-		}
-		for(i = 4;i < 15;i++)
-		{
-				ulTemp = ulSleepSYSCTL_PERIPH[i];
-				SysCtlPeripheralDeepSleepEnable(ulTemp);
-				ulRegVal = xHWREG(SYSCTL_DCGC1);
-				if(ulTemp & 0x00100000)
-				{
-						ulTemp = ulTemp << 16;
-				}
-				else
-				{
-						ulTemp = ulTemp & 0x0FFFFFFF;
-				}
+    }
+    for(i = 4;i < 15;i++)
+    {
+        ulTemp = ulSleepSYSCTL_PERIPH[i];
+        SysCtlPeripheralDeepSleepEnable(ulTemp);
+        ulRegVal = xHWREG(SYSCTL_DCGC1);
+        if(ulTemp & 0x00100000)
+        {
+            ulTemp = ulTemp << 16;
+        }
+        else
+        {
+            ulTemp = ulTemp & 0x0FFFFFFF;
+        }
         TestAssert((ulTemp == (ulRegVal & ulTemp)), "xsysctl API error!"); 
-		}
-		for(i = 15;i < 17;i++)
-		{
-				ulTemp = ulSleepSYSCTL_PERIPH[i];
-				SysCtlPeripheralDeepSleepEnable(ulTemp);
-				ulRegVal = xHWREG(SYSCTL_DCGC2);
-				if(ulTemp & 0x00100000)
-				{
-						ulTemp = ulTemp << 16;
-				}
-				else
-				{
-						ulTemp = ulTemp & 0x0FFFFFFF;
-				}
+    }
+    for(i = 15;i < 17;i++)
+    {
+        ulTemp = ulSleepSYSCTL_PERIPH[i];
+        SysCtlPeripheralDeepSleepEnable(ulTemp);
+        ulRegVal = xHWREG(SYSCTL_DCGC2);
+        if(ulTemp & 0x00100000)
+        {
+            ulTemp = ulTemp << 16;
+        }
+        else
+        {
+            ulTemp = ulTemp & 0x0FFFFFFF;
+        }
         TestAssert((ulTemp == (ulRegVal & ulTemp)), "xsysctl API error!"); 
-		}
-		
-		//
-		// Disable deep sleep mode
-		//
-		for(i = 0;i < 4;i++)
-		{
-				ulTemp = xHWREG(SYSCTL_DCGC0);
-				SysCtlPeripheralDeepSleepDisable(ulDeepSleepSYSCTL_PERIPH[i]);
-				if(ulDeepSleepSYSCTL_PERIPH[i] & 0x00100000)
-				{
-						ulTemp &= ~(ulDeepSleepSYSCTL_PERIPH[i] << 16);
-				}
-				else
-				{
-						ulTemp &= ~(ulDeepSleepSYSCTL_PERIPH[i] & 0x0FFFFFFF);
-				}
-				ulRegVal = xHWREG(SYSCTL_DCGC0);
+    }
+        
+    //
+    // Disable deep sleep mode
+    //
+    for(i = 0;i < 4;i++)
+    {
+        ulTemp = xHWREG(SYSCTL_DCGC0);
+        SysCtlPeripheralDeepSleepDisable(ulDeepSleepSYSCTL_PERIPH[i]);
+        if(ulDeepSleepSYSCTL_PERIPH[i] & 0x00100000)
+        {
+            ulTemp &= ~(ulDeepSleepSYSCTL_PERIPH[i] << 16);
+        }
+        else
+        {
+             ulTemp &= ~(ulDeepSleepSYSCTL_PERIPH[i] & 0x0FFFFFFF);
+        }
+        ulRegVal = xHWREG(SYSCTL_DCGC0);
         TestAssert(ulRegVal == ulTemp, "xsysctl API error!"); 
-		}
-		for(i = 4;i < 15;i++)
-		{
-				ulTemp = xHWREG(SYSCTL_DCGC1);
-				SysCtlPeripheralDeepSleepDisable(ulDeepSleepSYSCTL_PERIPH[i]);
-				if(ulDeepSleepSYSCTL_PERIPH[i] & 0x00100000)
-				{
-						ulTemp &= ~(ulDeepSleepSYSCTL_PERIPH[i] << 16);
-				}
-				else
-				{
-						ulTemp &= ~(ulDeepSleepSYSCTL_PERIPH[i] & 0x0FFFFFFF);
-				}
-				ulRegVal = xHWREG(SYSCTL_DCGC1);
+    }
+    for(i = 4;i < 15;i++)
+    {
+        ulTemp = xHWREG(SYSCTL_DCGC1);
+        SysCtlPeripheralDeepSleepDisable(ulDeepSleepSYSCTL_PERIPH[i]);
+        if(ulDeepSleepSYSCTL_PERIPH[i] & 0x00100000)
+        {
+            ulTemp &= ~(ulDeepSleepSYSCTL_PERIPH[i] << 16);
+        }
+        else
+        {
+            ulTemp &= ~(ulDeepSleepSYSCTL_PERIPH[i] & 0x0FFFFFFF);
+        }
+        ulRegVal = xHWREG(SYSCTL_DCGC1);
         TestAssert(ulRegVal == ulTemp, "xsysctl API error!"); 
-		}
-		for(i = 15;i < 17;i++)
-		{
-				ulTemp = xHWREG(SYSCTL_DCGC2);
-				SysCtlPeripheralDeepSleepDisable(ulDeepSleepSYSCTL_PERIPH[i]);
-				if(ulDeepSleepSYSCTL_PERIPH[i] & 0x00100000)
-				{
-						ulTemp &= ~(ulDeepSleepSYSCTL_PERIPH[i] << 16);
-				}
-				else
-				{
-						ulTemp &= ~(ulDeepSleepSYSCTL_PERIPH[i] & 0x0FFFFFFF);
-				}
-				ulRegVal = xHWREG(SYSCTL_DCGC2);
+    }
+    for(i = 15;i < 17;i++)
+    {
+        ulTemp = xHWREG(SYSCTL_DCGC2);
+        SysCtlPeripheralDeepSleepDisable(ulDeepSleepSYSCTL_PERIPH[i]);
+        if(ulDeepSleepSYSCTL_PERIPH[i] & 0x00100000)
+        {
+            ulTemp &= ~(ulDeepSleepSYSCTL_PERIPH[i] << 16);
+        }
+        else
+        {
+            ulTemp &= ~(ulDeepSleepSYSCTL_PERIPH[i] & 0x0FFFFFFF);
+        }
+        ulRegVal = xHWREG(SYSCTL_DCGC2);
         TestAssert(ulRegVal == ulTemp, "xsysctl API error!"); 
-		}
+    }
 }
 //*****************************************************************************
 //
@@ -359,19 +359,19 @@ void xsysctl_SysCtlPeripheralDeepSleepMode_test()
 //*****************************************************************************
 static void xSysctl004Execute(void)
 {
-		xsysctl_SysCtlPeripheralSleepMode_test();
-		xsysctl_SysCtlPeripheralDeepSleepClock_test();
-		xsysctl_SysCtlPeripheralDeepSleepMode_test();
+    xsysctl_SysCtlPeripheralSleepMode_test();
+    xsysctl_SysCtlPeripheralDeepSleepClock_test();
+    xsysctl_SysCtlPeripheralDeepSleepMode_test();
 }
 
 //
 // xsysctl register test case struct.
 //
 const tTestCase sTestXSysctl004Register = {
-		xSysctl004GetTest,
-		xSysctl004Setup,
-		xSysctl004TearDown,
-		xSysctl004Execute
+    xSysctl004GetTest,
+    xSysctl004Setup,
+    xSysctl004TearDown,
+    xSysctl004Execute
 };
 
 //

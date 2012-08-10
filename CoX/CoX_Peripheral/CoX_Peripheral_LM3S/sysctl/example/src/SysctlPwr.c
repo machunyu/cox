@@ -33,11 +33,11 @@
 void PWRCtlStandby(void)
 {
     xSysCtlClockSet(50000000, xSYSCTL_XTAL_16MHZ | 
-															xSYSCTL_OSC_MAIN	 |
-															xSYSCTL_INT_OSC_DIS);
-	
-		xSysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOJ);
-	
+                              xSYSCTL_OSC_MAIN   |
+                              xSYSCTL_INT_OSC_DIS);
+    
+    xSysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOJ);
+    
     xSysCtlSleep();
 }
  
@@ -50,7 +50,7 @@ void PWRCtlStandby(void)
 //! \return None
 //*****************************************************************************
 void WakeUpFromPowerDown(void)
-{	 
+{     
     xIntEnable(xINT_GPIOJ);
     xIntPrioritySet(xINT_GPIOJ, 1);
     xGPIOSPinTypeGPIOInput(PJ7);

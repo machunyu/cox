@@ -313,8 +313,8 @@ TIMER3BIntHandler(void)
 static unsigned long
 TimerClockGet(unsigned long ulBase)
 {
-		unsigned long ulFreq;
-		ulFreq = SysCtlClockGet();
+    unsigned long ulFreq;
+    ulFreq = SysCtlClockGet();
     return ulFreq;
 }
 
@@ -342,7 +342,7 @@ TimerClockGet(unsigned long ulBase)
 //*****************************************************************************
 void 
 TimerInitConfig(unsigned long ulBase, unsigned long ulChannel, 
-				unsigned long ulConfig, unsigned long ulTickFreq)
+                unsigned long ulConfig, unsigned long ulTickFreq)
 {    
     unsigned long ulPreScale;
     unsigned long ulTCMPRValue;
@@ -352,18 +352,18 @@ TimerInitConfig(unsigned long ulBase, unsigned long ulChannel,
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
     
-		xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
+    xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
            (ulChannel == TIMER_BOTH) || (ulChannel == TIMER_RTC));
-		
-		xASSERT((ulConfig == TIMER_MODE_PERIODIC) ||
-						(ulConfig == TIMER_MODE_ONESHOT)	||
-						(ulConfig == TIMER_MODE_PWM)			||
-						(ulConfig == TIMER_MODE_TOGGLE)   ||
-						(ulConfig == TIMER_MODE_CAPTURE));
+        
+    xASSERT((ulConfig == TIMER_MODE_PERIODIC) ||
+            (ulConfig == TIMER_MODE_ONESHOT)  ||
+            (ulConfig == TIMER_MODE_PWM)      ||
+            (ulConfig == TIMER_MODE_TOGGLE)   ||
+            (ulConfig == TIMER_MODE_CAPTURE));
 
-		xASSERT(ulTickFreq > 0);
-		
-		for (ulPreScale=1; ulPreScale<256; ulPreScale++)
+    xASSERT(ulTickFreq > 0);
+        
+    for (ulPreScale=1; ulPreScale<256; ulPreScale++)
     {
         ulTCMPRValue = TimerClockGet(ulBase) / (ulTickFreq * ulPreScale);
 
@@ -371,60 +371,60 @@ TimerInitConfig(unsigned long ulBase, unsigned long ulChannel,
         if ((ulTCMPRValue > 1) && (ulTCMPRValue < 0x10000))
             break;
     }
-		switch(ulChannel)
-		{
-				case TIMER_A:
-				{
-					xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_TAEN;
-					xHWREG(ulBase + TIMER_0_GPTMCFG) = 0x00000004;
-					xHWREG(ulBase + TIMER_0_GPTMTAMR) = ulConfig & 0x000000FF;
-					if((ulConfig == TIMER_MODE_PERIODIC) || 
-						 (ulConfig == TIMER_MODE_ONESHOT))
-					{
-						xHWREG(ulBase + TIMER_0_GPTMTAILR) = ulTCMPRValue;
-						xHWREG(ulBase + TIMER_0_GPTMTAPR) = ulPreScale;
-					}
-					if(ulConfig == TIMER_MODE_PWM)
-						xHWREG(ulBase + TIMER_0_GPTMTAILR) = TimerClockGet(ulBase) / ulTickFreq;
-				}
-				break;
-		
-				case TIMER_B:
-				{
-					xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_TBEN;
-					xHWREG(ulBase + TIMER_0_GPTMCFG) = 0x00000004;
-					xHWREG(ulBase + TIMER_0_GPTMTBMR) = ulConfig & 0x000000FF;
-					if((ulConfig == TIMER_MODE_ONESHOT) || 
-						 (ulConfig == TIMER_MODE_PERIODIC))
-					{
-						xHWREG(ulBase + TIMER_0_GPTMTBILR) = ulTCMPRValue;
-						xHWREG(ulBase + TIMER_0_GPTMTBPR) = ulPreScale;
-					}
-					if(ulConfig == TIMER_MODE_PWM)
-						xHWREG(ulBase + TIMER_0_GPTMTBILR) = TimerClockGet(ulBase) / ulTickFreq;
-				}			
-				break;
-				
-				case TIMER_BOTH:
-				{
-					xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_TAEN;
-					xHWREG(ulBase + TIMER_0_GPTMCFG) = 0x00000000;
-					xHWREG(ulBase + TIMER_0_GPTMTAMR) = ulConfig & 0x000000FF;
-					if((ulConfig == TIMER_MODE_ONESHOT) || 
-						 (ulConfig == TIMER_MODE_PERIODIC))
-					{
-						xHWREG(ulBase + TIMER_0_GPTMTAILR) = TimerClockGet(ulBase) / ulTickFreq;
-					}
-				}	
-				break;				
-		
-				case TIMER_RTC:
-				{
-					xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_TAEN;
-					xHWREG(ulBase + TIMER_0_GPTMCFG) = 0x00000001;
-					break;
-				}
-		}
+    switch(ulChannel)
+    {
+        case TIMER_A:
+        {
+            xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_TAEN;
+            xHWREG(ulBase + TIMER_0_GPTMCFG) = 0x00000004;
+            xHWREG(ulBase + TIMER_0_GPTMTAMR) = ulConfig & 0x000000FF;
+            if((ulConfig == TIMER_MODE_PERIODIC) || 
+               (ulConfig == TIMER_MODE_ONESHOT))
+            {
+                xHWREG(ulBase + TIMER_0_GPTMTAILR) = ulTCMPRValue;
+                xHWREG(ulBase + TIMER_0_GPTMTAPR) = ulPreScale;
+            }
+            if(ulConfig == TIMER_MODE_PWM)
+                xHWREG(ulBase + TIMER_0_GPTMTAILR) = TimerClockGet(ulBase) / ulTickFreq;
+        }
+        break;
+        
+        case TIMER_B:
+        {
+            xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_TBEN;
+            xHWREG(ulBase + TIMER_0_GPTMCFG) = 0x00000004;
+            xHWREG(ulBase + TIMER_0_GPTMTBMR) = ulConfig & 0x000000FF;
+            if((ulConfig == TIMER_MODE_ONESHOT) || 
+               (ulConfig == TIMER_MODE_PERIODIC))
+            {
+                xHWREG(ulBase + TIMER_0_GPTMTBILR) = ulTCMPRValue;
+                xHWREG(ulBase + TIMER_0_GPTMTBPR) = ulPreScale;
+            }
+            if(ulConfig == TIMER_MODE_PWM)
+                xHWREG(ulBase + TIMER_0_GPTMTBILR) = TimerClockGet(ulBase) / ulTickFreq;
+        }            
+        break;
+                
+        case TIMER_BOTH:
+        {
+            xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_TAEN;
+            xHWREG(ulBase + TIMER_0_GPTMCFG) = 0x00000000;
+            xHWREG(ulBase + TIMER_0_GPTMTAMR) = ulConfig & 0x000000FF;
+            if((ulConfig == TIMER_MODE_ONESHOT) || 
+               (ulConfig == TIMER_MODE_PERIODIC))
+            {
+                xHWREG(ulBase + TIMER_0_GPTMTAILR) = TimerClockGet(ulBase) / ulTickFreq;
+            }
+        }    
+        break;                
+        
+        case TIMER_RTC:
+        {
+            xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_TAEN;
+            xHWREG(ulBase + TIMER_0_GPTMCFG) = 0x00000001;
+            break;
+        }
+    }
 }
 
 //*****************************************************************************
@@ -450,22 +450,24 @@ TimerStart(unsigned long ulBase, unsigned long ulChannel)
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
-		xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
+            
+    xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
             (ulChannel == TIMER_BOTH) || (ulChannel == TIMER_RTC));
 
     //
     // Enable the timer(s) module.
     //
-		if(ulChannel == TIMER_RTC)
-			xHWREG(ulBase + TIMER_0_GPTMCTL) |= (ulChannel & (TIMER_GPTMCTL_TAEN | 
-																												TIMER_GPTMCTL_RTCEN));
-		else
-		{
-			xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_RTCEN;
-			xHWREG(ulBase + TIMER_0_GPTMCTL) |= (ulChannel & (TIMER_GPTMCTL_TAEN | 
-																												TIMER_GPTMCTL_TBEN));	
-		}
+    if(ulChannel == TIMER_RTC)
+	{
+        xHWREG(ulBase + TIMER_0_GPTMCTL) |= (ulChannel & (TIMER_GPTMCTL_TAEN | 
+                                                          TIMER_GPTMCTL_RTCEN));
+    }
+    else
+    {
+        xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_RTCEN;
+        xHWREG(ulBase + TIMER_0_GPTMCTL) |= (ulChannel & (TIMER_GPTMCTL_TAEN | 
+                                                          TIMER_GPTMCTL_TBEN));    
+    }
 }
 
 //*****************************************************************************
@@ -491,19 +493,23 @@ TimerStop(unsigned long ulBase, unsigned long ulChannel)
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
-		xASSERT((ulChannel == TIMER_A) 	|| (ulChannel == TIMER_B) ||
+            
+    xASSERT((ulChannel == TIMER_A)     || (ulChannel == TIMER_B) ||
             (ulChannel == TIMER_BOTH) || (ulChannel == TIMER_RTC));
 
     //
     // Enable the timer(s) module.
     //
-		if(ulChannel == TIMER_RTC)
-			xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~(ulChannel & (TIMER_GPTMCTL_TAEN | 																								
-																												 TIMER_GPTMCTL_RTCEN));
-		else
-			xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~(ulChannel & (TIMER_GPTMCTL_TAEN | 
-																												 TIMER_GPTMCTL_TBEN));
+    if(ulChannel == TIMER_RTC)
+	{
+        xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~(ulChannel & (TIMER_GPTMCTL_TAEN |                                                                                                 
+                                                           TIMER_GPTMCTL_RTCEN));
+    }
+    else
+    {    
+        xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~(ulChannel & (TIMER_GPTMCTL_TAEN | 
+                                                           TIMER_GPTMCTL_TBEN));
+    }
 }
 
 //*****************************************************************************
@@ -541,7 +547,7 @@ TimerCounterEnable(unsigned long ulBase, unsigned long ulChannel)
 void 
 TimerCounterDisable(unsigned long ulBase, unsigned long ulChannel)
 {
-	
+    
 }
 
 //*****************************************************************************
@@ -561,7 +567,7 @@ TimerCounterDisable(unsigned long ulBase, unsigned long ulChannel)
 //*****************************************************************************
 void 
 TimerCaptureModeSet(unsigned long ulBase, unsigned long ulChannel, 
-					unsigned long ulCapMode)
+                    unsigned long ulCapMode)
 {
     //
     // Check the arguments.
@@ -569,20 +575,20 @@ TimerCaptureModeSet(unsigned long ulBase, unsigned long ulChannel,
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
     
-		xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B));
-	
+    xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B));
+    
     xASSERT((ulCapMode == TIMER_CAP_COUNT) ||
             (ulCapMode == TIMER_CAP_TIME)); 
-		if(ulChannel & TIMER_A)	
-		{			
-				xHWREG(ulBase + TIMER_0_GPTMTAMR) &= ~TIMER_GPTMTAMR_TACMR_TMR;
-				xHWREG(ulBase + TIMER_0_GPTMTAMR) |= ulCapMode;
-		}
-		if(ulChannel & TIMER_B)		
-		{
-				xHWREG(ulBase + TIMER_0_GPTMTBMR) &= ~TIMER_GPTMTBMR_TBCMR_TMR;
-				xHWREG(ulBase + TIMER_0_GPTMTBMR) |= ulCapMode;
-		}
+    if(ulChannel & TIMER_A)    
+    {            
+        xHWREG(ulBase + TIMER_0_GPTMTAMR) &= ~TIMER_GPTMTAMR_TACMR_TMR;
+        xHWREG(ulBase + TIMER_0_GPTMTAMR) |= ulCapMode;
+    }
+    if(ulChannel & TIMER_B)        
+    {
+        xHWREG(ulBase + TIMER_0_GPTMTBMR) &= ~TIMER_GPTMTBMR_TBCMR_TMR;
+        xHWREG(ulBase + TIMER_0_GPTMTBMR) |= ulCapMode;
+    }
 }
 
 //*****************************************************************************
@@ -610,10 +616,10 @@ TimerPrescaleSet(unsigned long ulBase, unsigned long ulChannel,
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
+            
     xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
             (ulChannel == TIMER_BOTH));
-		   
+           
     xASSERT(ulValue < 256);
 
     //
@@ -685,7 +691,7 @@ TimerLoadSet(unsigned long ulBase, unsigned long ulChannel,
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
+            
     xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
             (ulChannel == TIMER_BOTH));
 
@@ -729,7 +735,7 @@ TimerLoadGet(unsigned long ulBase, unsigned long ulChannel)
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
+            
     xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B));
 
     //
@@ -762,14 +768,14 @@ TimerValueGet(unsigned long ulBase, unsigned long ulChannel)
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
+            
     xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
-			(ulChannel == TIMER_BOTH) || (ulChannel == TIMER_RTC));
+            (ulChannel == TIMER_BOTH) || (ulChannel == TIMER_RTC));
 
     //
     // Return the appropriate timer value.
     //
-    return((ulChannel & TIMER_A) ? xHWREG(ulBase + TIMER_0_GPTMTAR) :			 
+    return((ulChannel & TIMER_A) ? xHWREG(ulBase + TIMER_0_GPTMTAR) :             
             xHWREG(ulBase + TIMER_0_GPTMTBR));
 }
 
@@ -797,7 +803,7 @@ TimerMatchSet(unsigned long ulBase, unsigned long ulChannel,
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
+            
     xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
             (ulChannel == TIMER_BOTH) || (ulChannel == TIMER_RTC));
 
@@ -842,14 +848,14 @@ TimerMatchGet(unsigned long ulBase, unsigned long ulChannel)
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
+            
     xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
-						(ulChannel == TIMER_RTC));
+                        (ulChannel == TIMER_RTC));
 
     //
     // Return the appropriate match value.
     //
-    return((ulChannel & TIMER_A) ? xHWREG(ulBase + TIMER_0_GPTMTAMATCHR) :			 
+    return((ulChannel & TIMER_A) ? xHWREG(ulBase + TIMER_0_GPTMTAMATCHR) :             
             xHWREG(ulBase + TIMER_0_GPTMTBMATCHR));
 }
 
@@ -867,7 +873,7 @@ TimerMatchGet(unsigned long ulBase, unsigned long ulChannel)
 //*****************************************************************************
 void 
 TimerIntCallbackInit(unsigned long ulBase, unsigned long ulChannel, 
-											xtEventCallback xtTimerCallback)
+                                            xtEventCallback xtTimerCallback)
 {
     //
     // Check the arguments.
@@ -875,45 +881,45 @@ TimerIntCallbackInit(unsigned long ulBase, unsigned long ulChannel,
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
     
-		xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
-						(ulChannel == TIMER_BOTH));
-	
+    xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
+            (ulChannel == TIMER_BOTH));
+    
     if (xtTimerCallback != 0)
     {
         switch(ulBase)
         {
             case TIMER0_BASE:
-						{
-								if(ulChannel & TIMER_A)
-									g_pfnTimerHandlerCallbacks[0] = xtTimerCallback;
-								else
-									g_pfnTimerHandlerCallbacks[1] = xtTimerCallback;
+            {
+                if(ulChannel & TIMER_A)
+                    g_pfnTimerHandlerCallbacks[0] = xtTimerCallback;
+                else
+                    g_pfnTimerHandlerCallbacks[1] = xtTimerCallback;
                 break;
-						}
+            }
             case TIMER1_BASE:
-						{
-								if(ulChannel & TIMER_A)
-									g_pfnTimerHandlerCallbacks[2] = xtTimerCallback;
-								else
-									g_pfnTimerHandlerCallbacks[3] = xtTimerCallback;
+            {
+                if(ulChannel & TIMER_A)
+                    g_pfnTimerHandlerCallbacks[2] = xtTimerCallback;
+                else
+                    g_pfnTimerHandlerCallbacks[3] = xtTimerCallback;
                 break;
-						}
+            }
             case TIMER2_BASE:
             {
-								if(ulChannel & TIMER_A)
-									g_pfnTimerHandlerCallbacks[4] = xtTimerCallback;
-								else
-									g_pfnTimerHandlerCallbacks[5] = xtTimerCallback;
+                if(ulChannel & TIMER_A)
+                    g_pfnTimerHandlerCallbacks[4] = xtTimerCallback;
+                else
+                    g_pfnTimerHandlerCallbacks[5] = xtTimerCallback;
                 break;
-						}
+            }
             case TIMER3_BASE:
             {
-								if(ulChannel & TIMER_A)
-									g_pfnTimerHandlerCallbacks[6] = xtTimerCallback;
-								else
-									g_pfnTimerHandlerCallbacks[7] = xtTimerCallback;
+                if(ulChannel & TIMER_A)
+                    g_pfnTimerHandlerCallbacks[6] = xtTimerCallback;
+                else
+                    g_pfnTimerHandlerCallbacks[7] = xtTimerCallback;
                 break;
-						}
+            }
         }
     }
 }
@@ -929,17 +935,17 @@ TimerIntCallbackInit(unsigned long ulBase, unsigned long ulChannel,
 //! This function is to enable The Timer counter interrupt.
 //! 
 //! The \e ulIntFlags parameter is the OR value of any of the following:
-//! - \b TIMER_INT_TIMEMATCH  	- Timer match interrupt
-//! - \b TIMER_INT_CAP_EVENT  	- Capture event interrupt
-//! - \b TIMER_INT_CAP_MATCH  	- Capture match interrupt
-//! - \b TIMER_INT_TIMEOUT  		- Timer timeout interrupt
+//! - \b TIMER_INT_TIMEMATCH      - Timer match interrupt
+//! - \b TIMER_INT_CAP_EVENT      - Capture event interrupt
+//! - \b TIMER_INT_CAP_MATCH      - Capture match interrupt
+//! - \b TIMER_INT_TIMEOUT          - Timer timeout interrupt
 //!
 //! \return None.
 //
 //*****************************************************************************
 void 
 TimerIntEnable(unsigned long ulBase, unsigned long ulChannel, 
-								unsigned long ulIntFlags)
+                                unsigned long ulIntFlags)
 {
     //
     // Check the arguments.
@@ -949,35 +955,35 @@ TimerIntEnable(unsigned long ulBase, unsigned long ulChannel,
 
     xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
             (ulChannel == TIMER_BOTH) || (ulChannel == TIMER_RTC));
-	
-    xASSERT(((ulIntFlags & TIMER_INT_TIMEMATCH) == TIMER_INT_TIMEMATCH)	 || 
-						((ulIntFlags & TIMER_INT_CAP_EVENT) == TIMER_INT_CAP_EVENT)  || 
+    
+    xASSERT(((ulIntFlags & TIMER_INT_TIMEMATCH) == TIMER_INT_TIMEMATCH)     || 
+                        ((ulIntFlags & TIMER_INT_CAP_EVENT) == TIMER_INT_CAP_EVENT)  || 
             ((ulIntFlags & TIMER_INT_CAP_MATCH) == TIMER_INT_CAP_MATCH)  ||
-						((ulIntFlags & TIMER_INT_TIMEOUT)  == TIMER_INT_TIMEOUT));
+                        ((ulIntFlags & TIMER_INT_TIMEOUT)  == TIMER_INT_TIMEOUT));
     
     //
     // Enable the specified interrupts.
     //
-		if(ulChannel == TIMER_RTC)
-		{
-			xHWREG(ulBase + TIMER_0_GPTMIMR) = TIMER_GPTMIMR_RTCIM;
-		}
-		else
-		{
-				if(ulChannel & TIMER_A)
-				{
-						if(ulIntFlags & TIMER_INT_TIMEMATCH)
-						{
-								xHWREG(ulBase + TIMER_0_GPTMIMR) |= TIMER_GPTMIMR_TAMIM;
-								ulIntFlags &= ~TIMER_INT_TIMEMATCH;
-						}
-						xHWREG(ulBase + TIMER_0_GPTMIMR) |= (ulIntFlags);
-				}
-				if(ulChannel == TIMER_B)
-				{
-						xHWREG(ulBase + TIMER_0_GPTMIMR) |= (ulIntFlags << 8);
-				}
-		}
+    if(ulChannel == TIMER_RTC)
+    {
+        xHWREG(ulBase + TIMER_0_GPTMIMR) = TIMER_GPTMIMR_RTCIM;
+    }
+    else
+    {
+        if(ulChannel & TIMER_A)
+        {
+            if(ulIntFlags & TIMER_INT_TIMEMATCH)
+            {
+                xHWREG(ulBase + TIMER_0_GPTMIMR) |= TIMER_GPTMIMR_TAMIM;
+                 ulIntFlags &= ~TIMER_INT_TIMEMATCH;
+            }
+            xHWREG(ulBase + TIMER_0_GPTMIMR) |= (ulIntFlags);
+        }
+        if(ulChannel == TIMER_B)
+        {
+            xHWREG(ulBase + TIMER_0_GPTMIMR) |= (ulIntFlags << 8);
+        }
+    }
 }
 
 //*****************************************************************************
@@ -991,55 +997,55 @@ TimerIntEnable(unsigned long ulBase, unsigned long ulChannel,
 //! This function is to enable The Timer counter interrupt.
 //! 
 //! The \e ulIntFlags parameter is the OR value of any of the following:
-//! - \b TIMER_INT_TIMEMATCH  	- Timer match interrupt
-//! - \b TIMER_INT_CAP_EVENT  	- Capture event interrupt
-//! - \b TIMER_INT_CAP_MATCH  	- Capture match interrupt
-//! - \b TIMER_INT_TIMEOUT  		- Timer timeout interrupt
+//! - \b TIMER_INT_TIMEMATCH      - Timer match interrupt
+//! - \b TIMER_INT_CAP_EVENT      - Capture event interrupt
+//! - \b TIMER_INT_CAP_MATCH      - Capture match interrupt
+//! - \b TIMER_INT_TIMEOUT          - Timer timeout interrupt
 //!
 //! \return None.
 //
 //*****************************************************************************
 void 
 TimerIntDisable(unsigned long ulBase, unsigned long ulChannel, 
-									unsigned long ulIntFlags)
+                                    unsigned long ulIntFlags)
 {
     //
     // Check the arguments.
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-		
-		xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
+        
+    xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
             (ulChannel == TIMER_BOTH) || (ulChannel == TIMER_RTC));
-	
-    xASSERT(((ulIntFlags & TIMER_INT_TIMEMATCH) == TIMER_INT_TIMEMATCH)	 || 
-						((ulIntFlags & TIMER_INT_CAP_EVENT) == TIMER_INT_CAP_EVENT)  || 
+    
+    xASSERT(((ulIntFlags & TIMER_INT_TIMEMATCH) == TIMER_INT_TIMEMATCH)  || 
+            ((ulIntFlags & TIMER_INT_CAP_EVENT) == TIMER_INT_CAP_EVENT)  || 
             ((ulIntFlags & TIMER_INT_CAP_MATCH) == TIMER_INT_CAP_MATCH)  ||
-						((ulIntFlags & TIMER_INT_TIMEOUT)  == TIMER_INT_TIMEOUT));
+            ((ulIntFlags & TIMER_INT_TIMEOUT)  == TIMER_INT_TIMEOUT));
     
     //
     // Enable the specified interrupts.
     //
-		if(ulChannel == TIMER_RTC)
-		{
-			xHWREG(ulBase + TIMER_0_GPTMIMR) &= ~TIMER_GPTMIMR_RTCIM;
-		}
-		else
-		{
-				if(ulChannel & TIMER_A)
-				{
-						if(ulIntFlags & TIMER_INT_TIMEMATCH)
-						{
-								xHWREG(ulBase + TIMER_0_GPTMIMR) &= ~TIMER_GPTMIMR_TAMIM;
-								ulIntFlags &= ~TIMER_INT_TIMEMATCH;
-						}
-						xHWREG(ulBase + TIMER_0_GPTMIMR) &= ~(ulIntFlags);
-				}
-				if(ulChannel == TIMER_B)
-				{
-						xHWREG(ulBase + TIMER_0_GPTMIMR) &= ~(ulIntFlags << 8);
-				}
-		}
+    if(ulChannel == TIMER_RTC)
+    {
+        xHWREG(ulBase + TIMER_0_GPTMIMR) &= ~TIMER_GPTMIMR_RTCIM;
+    }
+    else
+    {
+        if(ulChannel & TIMER_A)
+        {
+            if(ulIntFlags & TIMER_INT_TIMEMATCH)
+            {
+                xHWREG(ulBase + TIMER_0_GPTMIMR) &= ~TIMER_GPTMIMR_TAMIM;
+                ulIntFlags &= ~TIMER_INT_TIMEMATCH;
+            }
+            xHWREG(ulBase + TIMER_0_GPTMIMR) &= ~(ulIntFlags);
+        }
+        if(ulChannel == TIMER_B)
+        {
+            xHWREG(ulBase + TIMER_0_GPTMIMR) &= ~(ulIntFlags << 8);
+        }
+    }
 }
 
 //*****************************************************************************
@@ -1063,41 +1069,42 @@ TimerIntDisable(unsigned long ulBase, unsigned long ulChannel,
 //*****************************************************************************
 xtBoolean
 TimerIntMaskStatus(unsigned long ulBase, unsigned long ulChannel, 
-										unsigned long ulIntFlags)
+                                        unsigned long ulIntFlags)
 {
 
-		//
+    //
     // Check the arguments.
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-	
+    
     xASSERT((ulChannel == TIMER_A)    || (ulChannel == TIMER_B) ||
             (ulChannel == TIMER_BOTH) || (ulChannel == TIMER_RTC));
-	
-    xASSERT((ulIntFlags == TIMER_INT_TIMEMATCH)	 || 
-						(ulIntFlags == TIMER_INT_CAP_EVENT)  || 
+    
+    xASSERT((ulIntFlags == TIMER_INT_TIMEMATCH)  || 
+            (ulIntFlags == TIMER_INT_CAP_EVENT)  || 
             (ulIntFlags == TIMER_INT_CAP_MATCH)  ||
-						(ulIntFlags == TIMER_INT_TIMEOUT));
-	
-		//
+            (ulIntFlags == TIMER_INT_TIMEOUT));
+    
+    //
     // Return the masked interrupt status as requested. 
     //  
-		if(ulChannel == TIMER_RTC)
-		{
-				return ((xHWREG(ulBase + TIMER_0_GPTMMIS) & TIMER_GPTMMIS_RTCMIS) ? xtrue : xfalse);
-		}
-		if((ulChannel & TIMER_A) && (ulIntFlags == TIMER_INT_TIMEMATCH))
-		{
-				return ((xHWREG(ulBase + TIMER_0_GPTMMIS) & TIMER_GPTMMIS_TAMMIS) ? xtrue : xfalse);
-		}
-		else
-		{
-				if(ulChannel & TIMER_B)
-						ulIntFlags <<= 8;
-				
-				return ((xHWREG(ulBase + TIMER_0_GPTMMIS) & ulIntFlags) ? xtrue : xfalse);
-		}
+    if(ulChannel == TIMER_RTC)
+    {
+        return ((xHWREG(ulBase + TIMER_0_GPTMMIS) & TIMER_GPTMMIS_RTCMIS) ? xtrue : xfalse);
+    }
+    if((ulChannel & TIMER_A) && (ulIntFlags == TIMER_INT_TIMEMATCH))
+    {
+        return ((xHWREG(ulBase + TIMER_0_GPTMMIS) & TIMER_GPTMMIS_TAMMIS) ? xtrue : xfalse);
+    }
+    else
+    {
+        if(ulChannel & TIMER_B)
+        {
+            ulIntFlags <<= 8;
+        }       
+        return ((xHWREG(ulBase + TIMER_0_GPTMMIS) & ulIntFlags) ? xtrue : xfalse);
+    }
 }
 
 //*****************************************************************************
@@ -1121,41 +1128,42 @@ TimerIntMaskStatus(unsigned long ulBase, unsigned long ulChannel,
 //*****************************************************************************
 xtBoolean
 TimerIntRawStatus(unsigned long ulBase, unsigned long ulChannel,
-									unsigned long ulIntFlags)
+                                    unsigned long ulIntFlags)
 {
 
-		//
+    //
     // Check the arguments.
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-		
-		xASSERT((ulChannel == TIMER_A)    || (ulChannel == TIMER_B) ||
+        
+    xASSERT((ulChannel == TIMER_A)    || (ulChannel == TIMER_B) ||
             (ulChannel == TIMER_BOTH) || (ulChannel == TIMER_RTC));
-	
-    xASSERT((ulIntFlags == TIMER_INT_TIMEMATCH)	 || 
-						(ulIntFlags == TIMER_INT_CAP_EVENT)  || 
+    
+    xASSERT((ulIntFlags == TIMER_INT_TIMEMATCH)  || 
+            (ulIntFlags == TIMER_INT_CAP_EVENT)  || 
             (ulIntFlags == TIMER_INT_CAP_MATCH)  ||
-						(ulIntFlags == TIMER_INT_TIMEOUT));
-	
-		//
+            (ulIntFlags == TIMER_INT_TIMEOUT));
+    
+    //
     // Return the raw interrupt status as requested.
     //  
-		if(ulChannel == TIMER_RTC)
-		{
-				return ((xHWREG(ulBase + TIMER_0_GPTMRIS) & TIMER_GPTMRIS_RTCRIS) ? xtrue : xfalse);
-		}
-		if((ulChannel & TIMER_A) && (ulIntFlags == TIMER_INT_TIMEMATCH))
-		{
-				return ((xHWREG(ulBase + TIMER_0_GPTMRIS) & TIMER_GPTMRIS_TAMRIS) ? xtrue : xfalse);
-		}
-		else
-		{
-				if(ulChannel & TIMER_B)
-						ulIntFlags <<= 8;
-				
-				return ((xHWREG(ulBase + TIMER_0_GPTMRIS) & ulIntFlags) ? xtrue : xfalse);
-		}
+    if(ulChannel == TIMER_RTC)
+    {
+        return ((xHWREG(ulBase + TIMER_0_GPTMRIS) & TIMER_GPTMRIS_RTCRIS) ? xtrue : xfalse);
+    }
+    if((ulChannel & TIMER_A) && (ulIntFlags == TIMER_INT_TIMEMATCH))
+    {
+        return ((xHWREG(ulBase + TIMER_0_GPTMRIS) & TIMER_GPTMRIS_TAMRIS) ? xtrue : xfalse);
+    }
+    else
+    {
+        if(ulChannel & TIMER_B)
+        {
+                        ulIntFlags <<= 8;
+        }						
+        return ((xHWREG(ulBase + TIMER_0_GPTMRIS) & ulIntFlags) ? xtrue : xfalse);
+    }
 }
 
 //*****************************************************************************
@@ -1179,42 +1187,42 @@ TimerIntRawStatus(unsigned long ulBase, unsigned long ulChannel,
 //*****************************************************************************
 void 
 TimerIntClear(unsigned long ulBase, unsigned long ulChannel, 
-							unsigned long ulIntFlags)
+                            unsigned long ulIntFlags)
 {
     //
     // Check the arguments.
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-		
-		xASSERT((ulChannel == TIMER_A)    || (ulChannel == TIMER_B) ||
+        
+    xASSERT((ulChannel == TIMER_A)    || (ulChannel == TIMER_B) ||
             (ulChannel == TIMER_BOTH) || (ulChannel == TIMER_RTC));
-	
-    xASSERT((ulIntFlags == TIMER_INT_TIMEMATCH)	 || 
-						(ulIntFlags == TIMER_INT_CAP_EVENT)  || 
+    
+    xASSERT((ulIntFlags == TIMER_INT_TIMEMATCH)     || 
+            (ulIntFlags == TIMER_INT_CAP_EVENT)  || 
             (ulIntFlags == TIMER_INT_CAP_MATCH)  ||
-						(ulIntFlags == TIMER_INT_TIMEOUT));
-	
-		if(ulChannel == TIMER_RTC)
-		{
-			xHWREG(ulBase + TIMER_0_GPTMICR) = TIMER_GPTMIMR_RTCIM;
-		}
-		else
-		{
-				if(ulChannel & TIMER_A)
-				{
-						if(ulIntFlags & TIMER_INT_TIMEMATCH)
-						{
-								xHWREG(ulBase + TIMER_0_GPTMICR) |= TIMER_GPTMICR_TAMCINT;
-								ulIntFlags &= ~TIMER_INT_TIMEMATCH;
-						}
-						xHWREG(ulBase + TIMER_0_GPTMICR) |= (ulIntFlags);
-				}
-				if(ulChannel == TIMER_B)
-				{
-						xHWREG(ulBase + TIMER_0_GPTMICR) |= (ulIntFlags << 8);
-				}
-		}
+            (ulIntFlags == TIMER_INT_TIMEOUT));
+    
+    if(ulChannel == TIMER_RTC)
+    {
+        xHWREG(ulBase + TIMER_0_GPTMICR) = TIMER_GPTMIMR_RTCIM;
+    }
+    else
+    {
+        if(ulChannel & TIMER_A)
+        {
+            if(ulIntFlags & TIMER_INT_TIMEMATCH)
+            {
+                xHWREG(ulBase + TIMER_0_GPTMICR) |= TIMER_GPTMICR_TAMCINT;
+                ulIntFlags &= ~TIMER_INT_TIMEMATCH;
+            }
+            xHWREG(ulBase + TIMER_0_GPTMICR) |= (ulIntFlags);
+        }
+        if(ulChannel == TIMER_B)
+        {
+            xHWREG(ulBase + TIMER_0_GPTMICR) |= (ulIntFlags << 8);
+        }
+    }
 }
 
 //*****************************************************************************
@@ -1239,30 +1247,30 @@ TimerIntClear(unsigned long ulBase, unsigned long ulChannel,
 //*****************************************************************************
 void
 TimerCounterDetectPhaseSelect(unsigned long ulBase, unsigned long ulChannel, 
-															unsigned long ulPhase)
+                                                            unsigned long ulPhase)
 {
     //
     // Check the arguments.
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-	
-		xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) || 
-						(ulChannel == TIMER_BOTH));
-	
+    
+    xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) || 
+            (ulChannel == TIMER_BOTH));
+    
     xASSERT((ulPhase == TIMER_COUNTER_RISING) || 
             (ulPhase == TIMER_COUNTER_FALLING));
 
-		if(ulChannel & TIMER_A)  
-		{
-				xHWREG(ulBase + TIMER_0_GPTMTAMR) &= ~TIMER_GPTMTAMR_TACDIR_UP;
-				xHWREG(ulBase + TIMER_0_GPTMTAMR) |= ulPhase;
-		}
-		if(ulChannel & TIMER_B)  
-		{
-				xHWREG(ulBase + TIMER_0_GPTMTBMR) &= ~TIMER_GPTMTBMR_TBCDIR_UP;
-				xHWREG(ulBase + TIMER_0_GPTMTBMR) |= ulPhase;
-		}
+    if(ulChannel & TIMER_A)  
+    {
+        xHWREG(ulBase + TIMER_0_GPTMTAMR) &= ~TIMER_GPTMTAMR_TACDIR_UP;
+        xHWREG(ulBase + TIMER_0_GPTMTAMR) |= ulPhase;
+    }
+    if(ulChannel & TIMER_B)  
+    {
+        xHWREG(ulBase + TIMER_0_GPTMTBMR) &= ~TIMER_GPTMTBMR_TBCDIR_UP;
+        xHWREG(ulBase + TIMER_0_GPTMTBMR) |= ulPhase;
+    }
 }
 
 //*****************************************************************************
@@ -1286,29 +1294,29 @@ TimerCounterDetectPhaseSelect(unsigned long ulBase, unsigned long ulChannel,
 //*****************************************************************************
 void 
 TimerCaptureEdgeSelect(unsigned long ulBase, unsigned long ulChannel,
-											 unsigned long ulEdge)
+                                             unsigned long ulEdge)
 {
     //
     // Check the arguments.
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
-		xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B));
+            
+    xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B));
 
-    xASSERT((ulEdge == TIMER_CAP_NEGEDGE) || 
-            (ulEdge == TIMER_CAP_BOTH) || 
+    xASSERT((ulEdge == TIMER_CAP_NEGEDGE) || (ulEdge == TIMER_CAP_BOTH) || 
             (ulEdge == TIMER_CAP_POSEDGE));
+
     if(ulChannel & TIMER_A)
-		{
-				xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_TAEVENT_M;
-				xHWREG(ulBase + TIMER_0_GPTMCTL) |= ulEdge;
-		}
+    {
+        xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_TAEVENT_M;
+        xHWREG(ulBase + TIMER_0_GPTMCTL) |= ulEdge;
+    }
     if(ulChannel & TIMER_B)
-		{
-				xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_TBEVENT_M;
-				xHWREG(ulBase + TIMER_0_GPTMCTL) |= (ulEdge << 8);
-		}   
+    {
+        xHWREG(ulBase + TIMER_0_GPTMCTL) &= ~TIMER_GPTMCTL_TBEVENT_M;
+        xHWREG(ulBase + TIMER_0_GPTMCTL) |= (ulEdge << 8);
+    }   
 }
 
 //*****************************************************************************
@@ -1336,7 +1344,7 @@ TimerControlLevel(unsigned long ulBase, unsigned long ulChannel,
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
+            
     xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
            (ulChannel == TIMER_BOTH));
 
@@ -1374,7 +1382,7 @@ TimerControlTrigger(unsigned long ulBase, unsigned long ulChannel,
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
+            
     xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
            (ulChannel == TIMER_BOTH));
 
@@ -1413,7 +1421,7 @@ TimerControlEvent(unsigned long ulBase, unsigned long ulChannel,
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-	
+    
     xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
            (ulChannel == TIMER_BOTH));
 
@@ -1422,8 +1430,8 @@ TimerControlEvent(unsigned long ulBase, unsigned long ulChannel,
     //
     ulEvent &= ulChannel & (TIMER_GPTMCTL_TAEVENT_M | TIMER_GPTMCTL_TBEVENT_M);
     xHWREG(ulBase + TIMER_0_GPTMCTL) = ((xHWREG(ulBase + TIMER_0_GPTMCTL) &
-																				~(TIMER_GPTMCTL_TAEVENT_M |
-																				TIMER_GPTMCTL_TBEVENT_M)) | ulEvent);
+                                        ~(TIMER_GPTMCTL_TAEVENT_M |
+                                        TIMER_GPTMCTL_TBEVENT_M)) | ulEvent);
 }
 
 //*****************************************************************************
@@ -1452,7 +1460,7 @@ TimerControlStall(unsigned long ulBase, unsigned long ulChannel,
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
+            
     xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
            (ulChannel == TIMER_BOTH));
 
@@ -1493,7 +1501,7 @@ TimerControlWaitOnTrigger(unsigned long ulBase, unsigned long ulChannel,
     //
     xASSERT((ulBase == TIMER3_BASE) || (ulBase == TIMER2_BASE) ||
             (ulBase == TIMER1_BASE) || (ulBase == TIMER0_BASE));
-			
+            
     xASSERT((ulChannel == TIMER_A) || (ulChannel == TIMER_B) ||
            (ulChannel == TIMER_BOTH));
 

@@ -6,7 +6,7 @@
 //!
 //! <h2>Description</h2>
 //! This module implements the test sequence for the xtimer sub component.<br><br>
-//! - \p Board: NUC140VE3CN board <br><br>
+//! - \p Board: LM3S9B96 board <br><br>
 //! - \p Last-Time(about): 0.5s <br><br>
 //! - \p Phenomenon: Success or failure information will be printed on the UART. <br><br>
 //! .
@@ -91,58 +91,58 @@ unsigned long Timer0ACallback(void *pvCBData,  unsigned long ulEvent,
                              unsigned long ulMsgParam, void *pvMsgData)
 {
     //TestEmitToken('A');
-		ulCountA[0] ++;
+    ulCountA[0] ++;
     return 0;
 }
 unsigned long Timer1ACallback(void *pvCBData,  unsigned long ulEvent,
                              unsigned long ulMsgParam, void *pvMsgData)
 {
     //TestEmitToken('A');
-		ulCountA[1] ++;
+    ulCountA[1] ++;
     return 0;
 }
 unsigned long Timer2ACallback(void *pvCBData,  unsigned long ulEvent,
                              unsigned long ulMsgParam, void *pvMsgData)
 {
-		TestEmitToken('A');
-		ulCountA[2] ++;
+    TestEmitToken('A');
+    ulCountA[2] ++;
     return 0;
 }
 unsigned long Timer3ACallback(void *pvCBData,  unsigned long ulEvent,
                              unsigned long ulMsgParam, void *pvMsgData)
 {
     TestEmitToken('A');
-		ulCountA[3] ++;
+    ulCountA[3] ++;
     return 0;
 }
 
 unsigned long Timer0BCallback(void *pvCBData,  unsigned long ulEvent,
                              unsigned long ulMsgParam, void *pvMsgData)
 {
-     //TestEmitToken('B');
-		ulCountB[0] ++;
-     return 0;
+    //TestEmitToken('B');
+    ulCountB[0] ++;
+    return 0;
 }
 unsigned long Timer1BCallback(void *pvCBData,  unsigned long ulEvent,
                              unsigned long ulMsgParam, void *pvMsgData)
 {
-     //TestEmitToken('B');
-		ulCountB[1] ++;
-     return 0;
+    //TestEmitToken('B');
+    ulCountB[1] ++;
+    return 0;
 }
 unsigned long Timer2BCallback(void *pvCBData,  unsigned long ulEvent,
                              unsigned long ulMsgParam, void *pvMsgData)
 {
-     //TestEmitToken('B');
-		ulCountB[2] ++;
-     return 0;
+    //TestEmitToken('B');
+    ulCountB[2] ++;
+    return 0;
 }
 unsigned long Timer3BCallback(void *pvCBData,  unsigned long ulEvent,
                              unsigned long ulMsgParam, void *pvMsgData)
 {
-     //TestEmitToken('B');
-		ulCountB[3] ++;
-     return 0;
+    //TestEmitToken('B');
+    ulCountB[3] ++;
+    return 0;
 }
 
 //
@@ -175,13 +175,13 @@ static char* xTimer002GetTest(void)
 //*****************************************************************************
 static void xTimer002Setup(void)
 {
-		unsigned char i;
-		//
+        unsigned char i;
+        //
     // Enable the tiemr0-3 peripheral
     //
     for(i = 0; i < 4; i++)
     { 
-				xSysCtlPeripheralReset(ulTimerID[i]);
+        xSysCtlPeripheralReset(ulTimerID[i]);
         xSysCtlPeripheralEnable(ulTimerID[i]);        
     }
 }
@@ -195,7 +195,7 @@ static void xTimer002Setup(void)
 //*****************************************************************************
 static void xTimer002TearDown(void)
 {
-		unsigned char i;
+    unsigned char i;
     //
     // Disable the tiemr0-3 peripheral
     //
@@ -214,20 +214,20 @@ static void xTimer002TearDown(void)
 //*****************************************************************************
 static void xTimer002Execute(void)
 {
-		unsigned long ulTemp;
+    unsigned long ulTemp;
     unsigned long ulBase;
     unsigned char i, j ;
-	
-		//
-		// 32 bit Timer one shot mode test
-		//
-		for(i = 0; i < 4; i++)
-		{
-				ulBase = ulTimerBase[i];
-			
-				TimerInitConfig(ulBase, TIMER_BOTH, TIMER_MODE_ONESHOT, 10);
-				
-				TimerIntEnable(ulBase, TIMER_BOTH, TIMER_INT_TIMEOUT);
+    
+    //
+    // 32 bit Timer one shot mode test
+    //
+    for(i = 0; i < 4; i++)
+    {
+        ulBase = ulTimerBase[i];
+            
+        TimerInitConfig(ulBase, TIMER_BOTH, TIMER_MODE_ONESHOT, 10);
+                
+        TimerIntEnable(ulBase, TIMER_BOTH, TIMER_INT_TIMEOUT);
         xIntEnable(ulTimerAIntID[i]);
         TimerIntCallbackInit(ulBase, TIMER_BOTH, TimerACallbackFunc[i]); 
         TimerStart(ulBase,TIMER_BOTH);
@@ -237,30 +237,30 @@ static void xTimer002Execute(void)
         //
         //TestAssertQBreak("B","One shot mode Intterrupt test fail", 1);
         xIntDisable(ulTimerAIntID[i]);
-		}
-		
-		//
-		// 32 bit RTC mode 
-		//
-		for(i = 0; i < 4; i++)
-		{
-				ulBase = ulTimerBase[i];
-			
-				TimerInitConfig(ulBase, TIMER_RTC, 0, 0);
-				
-				//
-				// interrupt period is 10s 
-				//
-				TimerMatchSet(ulBase, TIMER_RTC, 10);			
-				
-				TimerIntEnable(ulBase, TIMER_RTC, 0);
-				xIntEnable(ulTimerAIntID[i]);
-				TimerIntCallbackInit(ulBase, TIMER_RTC, TimerACallbackFunc[i]); 
-				ulCountA[i] = 0;
-				TimerStart(ulBase, TIMER_RTC);
-				while(ulCountA[i] < 2);			
-				xIntDisable(ulTimerAIntID[i]);
-		}
+    }
+        
+    //
+    // 32 bit RTC mode 
+    //
+    for(i = 0; i < 4; i++)
+    {
+        ulBase = ulTimerBase[i];
+            
+        TimerInitConfig(ulBase, TIMER_RTC, 0, 0);
+                
+        //
+        // interrupt period is 10s 
+        //
+        TimerMatchSet(ulBase, TIMER_RTC, 10);            
+                
+        TimerIntEnable(ulBase, TIMER_RTC, 0);
+        xIntEnable(ulTimerAIntID[i]);
+        TimerIntCallbackInit(ulBase, TIMER_RTC, TimerACallbackFunc[i]); 
+        ulCountA[i] = 0;
+        TimerStart(ulBase, TIMER_RTC);
+        while(ulCountA[i] < 2);            
+        xIntDisable(ulTimerAIntID[i]);
+    }
 
     //
     // 16 bit Timer B One shot mode test.
@@ -282,7 +282,7 @@ static void xTimer002Execute(void)
         TimerIntEnable(ulBase, TIMER_B, TIMER_INT_TIMEOUT);
         xIntEnable(ulTimerBIntID[i]);
         TimerIntCallbackInit(ulBase, TIMER_B, TimerBCallbackFunc[i]); 
-				ulCountB[i] = 0;
+                ulCountB[i] = 0;
         TimerStart(ulBase,TIMER_B);
         while(ulCountB[i] < 1);
         //
@@ -291,8 +291,8 @@ static void xTimer002Execute(void)
         //TestAssertQBreak("B","One shot mode Intterrupt test fail", 1);
         xIntDisable(ulTimerBIntID[i]);
     }  
-		
-		//
+        
+    //
     // 16-bit Timer A Periodic mode
     //
     for(i = 0; i < 4; i++)
@@ -335,10 +335,10 @@ static void xTimer002Execute(void)
 // xtimer register test case struct.
 //
 const tTestCase sTestxTimer002Mode = {
-		xTimer002GetTest,
-		xTimer002Setup,
-		xTimer002TearDown,
-		xTimer002Execute
+    xTimer002GetTest,
+    xTimer002Setup,
+    xTimer002TearDown,
+    xTimer002Execute
 };
 
 //

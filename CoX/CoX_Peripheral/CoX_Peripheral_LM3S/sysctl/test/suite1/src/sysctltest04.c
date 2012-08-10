@@ -48,8 +48,8 @@
 
 unsigned long ulLdoVoltage[] = {SYSCTL_LDO_2_25V, SYSCTL_LDO_2_30V, SYSCTL_LDO_2_35V,
                                 SYSCTL_LDO_2_40V, SYSCTL_LDO_2_45V, SYSCTL_LDO_2_50V,
-																SYSCTL_LDO_2_55V, SYSCTL_LDO_2_60V, SYSCTL_LDO_2_65V,
-																SYSCTL_LDO_2_70V, SYSCTL_LDO_2_75V};
+                                SYSCTL_LDO_2_55V, SYSCTL_LDO_2_60V, SYSCTL_LDO_2_65V,
+                                SYSCTL_LDO_2_70V, SYSCTL_LDO_2_75V};
 
 //*****************************************************************************
 //
@@ -60,7 +60,7 @@ unsigned long ulLdoVoltage[] = {SYSCTL_LDO_2_25V, SYSCTL_LDO_2_30V, SYSCTL_LDO_2
 //*****************************************************************************
 static char* xSysctl005GetTest(void)
 {
-  return "xsysctl, 005, xsysctl api test:Power and BOD.";
+    return "xsysctl, 005, xsysctl api test:Power and BOD.";
 }
 
 //*****************************************************************************

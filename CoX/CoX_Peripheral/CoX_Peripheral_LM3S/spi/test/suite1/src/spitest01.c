@@ -57,7 +57,7 @@
 #define W25X80_DESELECT() GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_0, 1)
 
 #define LED_ON() xGPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 1 << 3)
-#define LED_OFF()	xGPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 0)
+#define LED_OFF()    xGPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 0)
 //*****************************************************************************
 //
 //! \brief Get the Test description of xspi001 register test.
@@ -79,10 +79,10 @@ static char* xSpi002GetTest(void)
 //*****************************************************************************
 static void xSpi002Setup(void)
 {
-		//
+    //
     // Enable Peripheral SPI0 and SPI1.
-		//
-		SysCtlPeripheralReset(SYSCTL_PERIPH_SSI0);
+    //
+    SysCtlPeripheralReset(SYSCTL_PERIPH_SSI0);
     SysCtlPeripheralReset(SYSCTL_PERIPH_SSI1);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI1); 
@@ -110,68 +110,68 @@ static void xSpi002TearDown(void)
 //*****************************************************************************
 void xspi002_SpiNormalModeInit_test(void)
 {
-		unsigned long ulTemp;
-		
-		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-		GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0);
-	
-		ulTemp = (xSPI_MOTO_FORMAT_MODE_0 | xSPI_MODE_MASTER | xSPI_DATA_WIDTH8);
-		xSPIConfigSet(xSPI0_BASE, 2000000, ulTemp);
-		
-		xSPinTypeSPI(SPI0CLK, PA2);
-		xSPinTypeSPI(SPI0CS, PA3);
-		xSPinTypeSPI(SPI0RX, PA4);
-		xSPinTypeSPI(SPI0TX, PA5);	
-	
-		SSIEnable(xSPI0_BASE);
+    unsigned long ulTemp;
+        
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0);
+    
+    ulTemp = (xSPI_MOTO_FORMAT_MODE_0 | xSPI_MODE_MASTER | xSPI_DATA_WIDTH8);
+    xSPIConfigSet(xSPI0_BASE, 2000000, ulTemp);
+        
+    xSPinTypeSPI(SPI0CLK, PA2);
+    xSPinTypeSPI(SPI0CS, PA3);
+    xSPinTypeSPI(SPI0RX, PA4);
+    xSPinTypeSPI(SPI0TX, PA5);    
+    
+    SSIEnable(xSPI0_BASE);
 }
 
 void W25X80ReadJID(unsigned char cmd, unsigned char* data, unsigned char len)
 {
-		W25X80_SELECT();
-		SSISingleDataReadWrite(xSPI0_BASE, cmd); 
-		for(;len>0;len--)
-		{
-				*data++=SSISingleDataReadWrite(xSPI0_BASE, 0xff);
-		}
-		W25X80_DESELECT();
+    W25X80_SELECT();
+    SSISingleDataReadWrite(xSPI0_BASE, cmd); 
+    for(;len>0;len--)
+    {
+        *data++=SSISingleDataReadWrite(xSPI0_BASE, 0xff);
+    }
+    W25X80_DESELECT();
 }
 
 void W25X80ReadMID(unsigned char cmd, unsigned long addr,
-										unsigned char* data, unsigned char len)
+                   unsigned char* data, unsigned char len)
 {
-		W25X80_SELECT();
-		SSISingleDataReadWrite(xSPI0_BASE, cmd); 
-		SSISingleDataReadWrite(xSPI0_BASE, (addr >> 16) & 0xff);
-		SSISingleDataReadWrite(xSPI0_BASE, (addr >> 8) & 0xff);
-		SSISingleDataReadWrite(xSPI0_BASE, addr & 0xff);
-		for(;len>0;len--)
-		{
-				*data++=SSISingleDataReadWrite(xSPI0_BASE, 0xff);
-		}
-		W25X80_DESELECT();
+    W25X80_SELECT();
+    SSISingleDataReadWrite(xSPI0_BASE, cmd); 
+    SSISingleDataReadWrite(xSPI0_BASE, (addr >> 16) & 0xff);
+    SSISingleDataReadWrite(xSPI0_BASE, (addr >> 8) & 0xff);
+    SSISingleDataReadWrite(xSPI0_BASE, addr & 0xff);
+    for(;len>0;len--)
+    {
+        *data++=SSISingleDataReadWrite(xSPI0_BASE, 0xff);
+    }
+    W25X80_DESELECT();
 }
 
 //*****************************************************************************
 //
 //! \brief xspi 002 ssi normal mode write and read test. read the manufacturer
-//!				ID of W25X80A spiflash
+//!                ID of W25X80A spiflash
 //!
 //! \return None.
 //
 //*****************************************************************************
 void xspi002_SpiNormalModeRW_test(void)
 {
-		unsigned char MID[2] = {0};
-		unsigned char JID[3] = {0};
+    unsigned char MID[2] = {0};
+    unsigned char JID[3] = {0};
 
-		W25X80ReadMID(0x90, 0x000000, MID, 2);
-		TestAssert((MID[0] == 0xEF) && (MID[1] == 0x13), "xspi API error!");
+    W25X80ReadMID(0x90, 0x000000, MID, 2);
+    TestAssert((MID[0] == 0xEF) && (MID[1] == 0x13), "xspi API error!");
 
-		W25X80ReadJID(0x9F, JID, 3);
-		//TestAssert((JID[0] == 0xEF) && (JID[1] == 0x30) && (JID[2] == 0x14), 
-		//						"xspi API error!");
-												
+    W25X80ReadJID(0x9F, JID, 3);
+    //TestAssert((JID[0] == 0xEF) && (JID[1] == 0x30) && (JID[2] == 0x14), 
+    //                        "xspi API error!");
+                                                
 }
 //*****************************************************************************
 //
@@ -182,8 +182,8 @@ void xspi002_SpiNormalModeRW_test(void)
 //*****************************************************************************
 static void xSpi002Execute(void)
 {
-		xspi002_SpiNormalModeInit_test();
-		xspi002_SpiNormalModeRW_test();
+    xspi002_SpiNormalModeInit_test();
+    xspi002_SpiNormalModeRW_test();
 }
 
 //

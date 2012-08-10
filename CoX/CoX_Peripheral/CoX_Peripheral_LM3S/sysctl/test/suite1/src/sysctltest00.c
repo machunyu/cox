@@ -94,9 +94,9 @@ static void xSysctl001Setup(void)
     // PLL: input 8MHz , output 50MHz
     //
     xHWREG(SYSCTL_RCC) &= ~SYSCTL_RCC_SYSDIV_M;
-		xHWREG(SYSCTL_RCC) &= ~SYSCTL_RCC_XTAL_M;
-		xHWREG(SYSCTL_RCC) |= SYSCTL_RCC_XTAL_8MHZ;
-		xHWREG(SYSCTL_RCC) |= SYSCTL_RCC_SYSDIV_4;
+    xHWREG(SYSCTL_RCC) &= ~SYSCTL_RCC_XTAL_M;
+    xHWREG(SYSCTL_RCC) |= SYSCTL_RCC_XTAL_8MHZ;
+    xHWREG(SYSCTL_RCC) |= SYSCTL_RCC_SYSDIV_4;
 }
 
 
@@ -113,8 +113,8 @@ static void xSysctl001TearDown(void)
 }
 void delay(void)
 {
-		unsigned int t = 8000;
-		while(t--);
+        unsigned int t = 8000;
+        while(t--);
 }
 //*****************************************************************************
 //
@@ -129,16 +129,15 @@ static void xsysctl_SetHCLK_test(void)
 #if 0
     for(i = 1; i <= 16; i++)
     {
-				xHWREG(SYSCTL_RCC) |= (SYSCTL_RCC_BYPASS | SYSCTL_RCC_USESYSDIV);
-        SysCtlClockSet((i<<23) | SYSCTL_XTAL_8MHZ | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN );
-				delay();								
+        xHWREG(SYSCTL_RCC) |= (SYSCTL_RCC_BYPASS | SYSCTL_RCC_USESYSDIV);
+        SysCtlClockSet((i<<23) | SYSCTL_XTAL_8MHZ | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN );                           
         ulTemp = SysCtlClockGet();
         //TestAssert(ulTemp == 8000000/(i+1), "xsysctl API error!");
     }
-#endif		
+#endif        
     for(i=3;i<16;i++)
     {
-				xHWREG(SYSCTL_RCC) &= ~SYSCTL_RCC_BYPASS;
+        xHWREG(SYSCTL_RCC) &= ~SYSCTL_RCC_BYPASS;
         SysCtlClockSet((i << 23) | SYSCTL_XTAL_8MHZ | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN);
         delay();                                       
         ulTemp = SysCtlClockGet()/1000000;
@@ -164,8 +163,8 @@ static void xsysctl_SetHCLK_test(void)
     xSysCtlClockSet(30000, xSYSCTL_OSC_INTSL | xSYSCTL_INTSL_30KHZ | SYSCTL_MAIN_OSC_DIS);
     ulTemp = xSysCtlClockGet();
     TestAssert(ulTemp == 30000, "xsysctl API error!");
-		
-		//
+        
+        //
     // Clock Set Test Source from Inter_12MHz
     //
     xSysCtlClockSet(12000000, xSYSCTL_OSC_INT | xSYSCTL_INT_12MHZ | SYSCTL_MAIN_OSC_DIS);
@@ -190,10 +189,10 @@ static void xSysctl001Execute(void)
 // xsysctl register test case struct.
 //
 const tTestCase sTestXSysctl001Register = {
-		xSysctl001GetTest,
-		xSysctl001Setup,
-		xSysctl001TearDown,
-		xSysctl001Execute
+    xSysctl001GetTest,
+    xSysctl001Setup,
+    xSysctl001TearDown,
+    xSysctl001Execute
 };
 
 //

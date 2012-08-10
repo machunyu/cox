@@ -75,9 +75,9 @@ static char* xSpi003GetTest(void)
 //*****************************************************************************
 static void xSpi003Setup(void)
 {
-		//
+    //
     // Enable Peripheral SPI0 and SPI1.
-		//
+    //
     SysCtlPeripheralReset(SYSCTL_PERIPH_SSI0);
     SysCtlPeripheralReset(SYSCTL_PERIPH_SSI1);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
@@ -106,20 +106,20 @@ static void xSpi003TearDown(void)
 //*****************************************************************************
 static void xSpi003Execute(void)
 {
-		unsigned long i, j, ulRegVal;
-		for(i = 0;i < 2;i ++)
-		{
-				for(j = 0;j < 2;j ++)
-				{
-						SSIDMAEnable(ulSPI[i],ulDMAFlags[j]);
-						ulRegVal = xHWREG(ulSPI[i] + SSI_DMACTL) & ulDMAFlags[j];
-						TestAssert(ulRegVal == ulDMAFlags[j], "xspi API error!");												
+    unsigned long i, j, ulRegVal;
+    for(i = 0;i < 2;i ++)
+    {
+        for(j = 0;j < 2;j ++)
+         {
+            SSIDMAEnable(ulSPI[i],ulDMAFlags[j]);
+            ulRegVal = xHWREG(ulSPI[i] + SSI_DMACTL) & ulDMAFlags[j];
+            TestAssert(ulRegVal == ulDMAFlags[j], "xspi API error!");                                                
 
-						SSIDMADisable(ulSPI[i],ulDMAFlags[j]);
-						ulRegVal = xHWREG(ulSPI[i] + SSI_DMACTL) & ulDMAFlags[j];
-						TestAssert(ulRegVal == 0, "xspi API error!");	
-				}
-		}
+            SSIDMADisable(ulSPI[i],ulDMAFlags[j]);
+            ulRegVal = xHWREG(ulSPI[i] + SSI_DMACTL) & ulDMAFlags[j];
+            TestAssert(ulRegVal == 0, "xspi API error!");    
+        }
+    }
 }
 
 //

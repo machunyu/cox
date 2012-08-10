@@ -69,7 +69,7 @@ static char* xSysctl002GetTest(void)
 //*****************************************************************************
 static void xSysctl002Setup(void)
 {
-		unsigned long ulTemp;
+    unsigned long ulTemp;
     ulTemp = SYSCTL_SYSDIV_1 | SYSCTL_XTAL_8MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_OSC;
                                                            
     SysCtlClockSet(ulTemp);
@@ -107,10 +107,10 @@ static void xSysctl002Execute(void)
 // xsysctl register test case struct.
 //
 const tTestCase sTestXSysctl002Register = {
-		xSysctl002GetTest,
-		xSysctl002Setup,
-		xSysctl002TearDown,
-		xSysctl002Execute
+    xSysctl002GetTest,
+    xSysctl002Setup,
+    xSysctl002TearDown,
+    xSysctl002Execute
 };
 
 //

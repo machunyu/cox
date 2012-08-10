@@ -5,7 +5,7 @@
 //! \date 7/14/2012
 //! \author CooCox
 //! 
-//! The timer source select external 8M hz crystal oscillator.
+//! The timer source select external 16M hz crystal oscillator.
 //! 
 //! \copy
 //
@@ -46,10 +46,10 @@ void OneSecondClock(void)
     //
     //Set the external 8MHZ clock as system clock 
     //
-		SysCtlClockSet(	SYSCTL_SYSDIV_1 	| 	/* 时钟1分频 			*/
-										SYSCTL_USE_OSC	 	|		/* 使用用户时钟 	*/
-										SYSCTL_XTAL_16MHZ	|  	/* 使用外部8M晶振 */
-										SYSCTL_OSC_MAIN);			/* 使用主时钟 		*/
+        SysCtlClockSet( SYSCTL_SYSDIV_1     |    
+                        SYSCTL_USE_OSC      |        
+                        SYSCTL_XTAL_16MHZ   |      
+                        SYSCTL_OSC_MAIN);            
     
     UART0Configuration();
     
@@ -101,18 +101,18 @@ void OneSecondClock(void)
 //*****************************************************************************
 void UART0Configuration(void)
 {  
-		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);//开启GPIOA时钟
-	
-		xSPinTypeUART(UART0RX, PA0);
-		xSPinTypeUART(UART0TX, PA1);
-	
-		xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART0);
-		xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART0);					//打开串口0时钟
-	
-		UARTConfigSetExpClk(UART0_BASE, 115200, (UART_CONFIG_WLEN_8 	| 
-                                             UART_CONFIG_STOP_1	 	| 
-                                             UART_CONFIG_PAR_NONE));
-		UARTEnable(UART0_BASE, (UART_BLOCK_UART | UART_BLOCK_TX | UART_BLOCK_RX));
+        SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    
+        xSPinTypeUART(UART0RX, PA0);
+        xSPinTypeUART(UART0TX, PA1);
+    
+        xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART0);
+        xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART0);                    
+    
+        UARTConfigSetExpClk(UART0_BASE, 115200, (UART_CONFIG_WLEN_8     | 
+                                                 UART_CONFIG_STOP_1     | 
+                                                 UART_CONFIG_PAR_NONE));
+        UARTEnable(UART0_BASE, (UART_BLOCK_UART | UART_BLOCK_TX | UART_BLOCK_RX));
 }
 
 //*****************************************************************************
@@ -133,9 +133,9 @@ void Print(char *pcMsg)
         ucData = *pcMsg++;
 
         while(xHWREG(UART0_BASE + UART_FR) & UART_FR_TXFF);
-				//
-				// Write this character to the transmit FIFO.
-				//
-				xHWREG(UART0_BASE + UART_DR) = ucData;
+        //
+        // Write this character to the transmit FIFO.
+        //
+        xHWREG(UART0_BASE + UART_DR) = ucData;
     }
 }

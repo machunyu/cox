@@ -45,8 +45,7 @@
 //!
 //
 //*****************************************************************************
-static unsigned long ulPeriprerAddr[] = { 
-xUART0_BASE, xUART1_BASE};
+static unsigned long ulPeriprerAddr[] = {xUART0_BASE, xUART1_BASE};
 
 static unsigned long ulGPIOBaseAddr[] = {xGPIO_PORTA_BASE, xGPIO_PORTB_BASE, 
 xGPIO_PORTC_BASE, xGPIO_PORTD_BASE, xGPIO_PORTE_BASE, xGPIO_PORTF_BASE, xGPIO_PORTG_BASE};
@@ -72,7 +71,7 @@ static char* xSysctl006GetTest(void)
 //*****************************************************************************
 static void xSysctl006Setup(void)
 {
-		unsigned long ulTemp;
+    unsigned long ulTemp;
     ulTemp = SYSCTL_SYSDIV_1|SYSCTL_XTAL_8MHZ|SYSCTL_OSC_MAIN | SYSCTL_USE_OSC;
     SysCtlClockSet(ulTemp);
 }
@@ -86,22 +85,22 @@ static void xSysctl006Setup(void)
 //*****************************************************************************
 static void xSysctl006TearDown(void)
 {   
-		unsigned long ulTemp;
+    unsigned long ulTemp;
     ulTemp = SYSCTL_SYSDIV_1|SYSCTL_XTAL_8MHZ|SYSCTL_OSC_MAIN | SYSCTL_USE_OSC;
     SysCtlClockSet(ulTemp);
-	
-		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);//开启GPIOA时钟
-	
-		xSPinTypeUART(UART0RX, PA0);
-		xSPinTypeUART(UART0TX, PA1);
-	
-		xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART0);
-		xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART0);					//打开串口0时钟
-	
-		UARTConfigSetExpClk(UART0_BASE, 115200, (UART_CONFIG_WLEN_8 	| 
-                                             UART_CONFIG_STOP_1	 	| 
+    
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    
+    xSPinTypeUART(UART0RX, PA0);
+    xSPinTypeUART(UART0TX, PA1);
+    
+    xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART0);
+    xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART0);                    
+    
+    UARTConfigSetExpClk(UART0_BASE, 115200, (UART_CONFIG_WLEN_8     | 
+                                             UART_CONFIG_STOP_1     | 
                                              UART_CONFIG_PAR_NONE));
-		UARTEnable(UART0_BASE, (UART_BLOCK_UART | UART_BLOCK_TX | UART_BLOCK_RX));
+    UARTEnable(UART0_BASE, (UART_BLOCK_UART | UART_BLOCK_TX | UART_BLOCK_RX));
 }
 
 //*****************************************************************************
@@ -117,16 +116,16 @@ static void xsysctl_xSysCtlPeripheralDisable2_test(void)
     
     for(i = 0; i < 2; i++)
     {
-        xSysCtlPeripheralDisable2(ulPeriprerAddr[i]);				
+        xSysCtlPeripheralDisable2(ulPeriprerAddr[i]);                
         ulRegVal = xHWREG(SYSCTL_RCGC1);
-				ulTemp = 1 << i;
+        ulTemp = 1 << i;
         TestAssert((ulRegVal & ulTemp) == 0, "xsysctl API error!");        
     }
-		for(i = 0; i < 7; i++)
+    for(i = 0; i < 7; i++)
     {
-        xSysCtlPeripheralDisable2(ulGPIOBaseAddr[i]);				
+        xSysCtlPeripheralDisable2(ulGPIOBaseAddr[i]);                
         ulRegVal = xHWREG(SYSCTL_RCGC2);
-				ulTemp = 1 << i;
+        ulTemp = 1 << i;
         TestAssert((ulRegVal & ulTemp) == 0, "xsysctl API error!");        
     }
 }
@@ -147,7 +146,7 @@ static void xsysctl_xSysCtlPeripheralReset2_test(void)
         TestAssert( (0 == xHWREG(SYSCTL_SRCR0))&&(0 == xHWREG(SYSCTL_SRCR1))&&(0 == xHWREG(SYSCTL_SRCR2)), 
                                                           "xsysctl API error!");
     }
-		for(i = 0; i < 7; i++)
+    for(i = 0; i < 7; i++)
     {
         xSysCtlPeripheralReset2(ulGPIOBaseAddr[i]);
         TestAssert( (0 == xHWREG(SYSCTL_SRCR0))&&(0 == xHWREG(SYSCTL_SRCR1))&&(0 == xHWREG(SYSCTL_SRCR2)), 
@@ -170,14 +169,14 @@ static void xsysctl_xSysCtlPeripheralEnable2_test(void)
     {
         xSysCtlPeripheralEnable2(ulPeriprerAddr[i]);
         ulRegVal = xHWREG(SYSCTL_RCGC1);
-				ulTemp = 1 << i;
+        ulTemp = 1 << i;
         TestAssert((ulTemp == (ulRegVal & ulTemp)), "xsysctl API error!");  
     }
-		for(i = 0; i < 7; i++)
+    for(i = 0; i < 7; i++)
     {
         xSysCtlPeripheralEnable2(ulGPIOBaseAddr[i]);
         ulRegVal = xHWREG(SYSCTL_RCGC2);
-				ulTemp = 1 << i;
+        ulTemp = 1 << i;
         TestAssert((ulTemp == (ulRegVal & ulTemp)), "xsysctl API error!");  
     }
 }

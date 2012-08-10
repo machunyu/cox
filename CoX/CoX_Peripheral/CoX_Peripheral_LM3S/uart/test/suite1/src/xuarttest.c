@@ -101,7 +101,7 @@ unsigned long ulRxLevel[] = {UART_FIFO_RX1_8, UART_FIFO_RX2_8, UART_FIFO_RX4_8,
 // UART LIN Control
 //
 unsigned long LinSyncBreakLength[] = {UART_LIN_SYNC_BREAK_LEN_13, UART_LIN_SYNC_BREAK_LEN_14,
-				      UART_LIN_SYNC_BREAK_LEN_15, UART_LIN_SYNC_BREAK_LEN_16};
+                                      UART_LIN_SYNC_BREAK_LEN_15, UART_LIN_SYNC_BREAK_LEN_16};
 
 unsigned long LinMode[] = {UART_LIN_MODE_MASTER, UART_LIN_MODE_SLAVE};
 //
@@ -117,13 +117,13 @@ unsigned long ulFlowCtlCfg[] = {UART_FLOWCONTROL_TX, UART_FLOWCONTROL_RX,
 // DMA control test
 //
 unsigned long ulDMAFlag[] = {UART_DMA_RX, UART_DMA_TX, UART_DMA_ERR_RXSTOP};
-#define   DMACtlNum       countof(ulDMAFlag)
+#define   DMACtlNum     countof(ulDMAFlag)
 
 unsigned long ulModemCfg[] = {UART_OUTPUT_RTS, UART_OUTPUT_DTR};
 unsigned long ulModemSt[] = {UART_OUTPUT_RTS, UART_OUTPUT_DTR};
 
-#define  modemStNum       countof(ulModemSt)
-#define  modemCfgNum	  countof(ulModemCfg)
+#define  modemStNum     countof(ulModemSt)
+#define  modemCfgNum    countof(ulModemCfg)
 
 
 //*****************************************************************************
@@ -147,7 +147,7 @@ static char* xuart001GetTest(void)
 //*****************************************************************************
 static void xuart001Setup(void)
 {
-		xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART);
+    xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART);
     xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART);   
 }
 
@@ -228,15 +228,15 @@ void xuart001Execute_NormalConfig(void)
 unsigned long uart0CallbackFunc(void *pvCBData, unsigned long ulEvent,
                                 unsigned long ulMsgParam, void *pvMsgData)                                                                                  
 {
-		if(ulEvent == xUART_INT_TX)
-		{
-		}
-		if(ulEvent == xUART_INT_RX)
-		{
-				recData[recNum++] = UARTCharGet(UART0_BASE);                              
-				return 0; 
-		}
-		return 0;
+    if(ulEvent == xUART_INT_TX)
+    {
+    }
+    if(ulEvent == xUART_INT_RX)
+    {
+        recData[recNum++] = UARTCharGet(UART0_BASE);                              
+        return 0; 
+    }
+    return 0;
 }
 
 void xuart001Execute_uartInt(void)
@@ -262,7 +262,7 @@ void xuart001Execute_uartInt(void)
     {
         UARTCharPut(UART0_BASE, info[i]);
     }
-			
+            
     //
     // wait the hyperterminal to transmit data "0123456789"
     //
@@ -276,8 +276,8 @@ void xuart001Execute_uartInt(void)
         TestAssert(recData[i] == ('0' + i), 
                     "xuart API \"receive\" or \"interrupt\" error!");      
     }
-		
-		UARTIntDisable(UART0_BASE, UART_INT_RX);
+        
+    UARTIntDisable(UART0_BASE, UART_INT_RX);
 }
 
 //*****************************************************************************
@@ -299,7 +299,7 @@ static void xuart001Execute(void)
     //
 #if !(xUART_CONFIG_DMA_INT)
     xuart001Execute_uartInt(); 
-#endif	
+#endif    
 }
 
 //
@@ -345,17 +345,17 @@ static void xuart002Setup(void)
 //*****************************************************************************
 static void xuart002TearDown(void)
 {
-		xSysCtlPeripheralDisable(xSYSCTL_PERIPH_GPIOC);
-		xSysCtlPeripheralDisable(xSYSCTL_PERIPH_UART);
+    xSysCtlPeripheralDisable(xSYSCTL_PERIPH_GPIOC);
+    xSysCtlPeripheralDisable(xSYSCTL_PERIPH_UART);
 }
 
 void xuart002Execute_FIFOConfig(void)
 {
     unsigned long ulTemp1, ulTemp2, i;
-		
-		UARTFIFOEnable(UART_BASE);
+        
+    UARTFIFOEnable(UART_BASE);
     ulTemp1 = xHWREG(UART_BASE + UART_LCRH) & UART_LCRH_FEN;
-		TestAssert(ulTemp1 == UART_LCRH_FEN, "xuart API \"UARTFIFOEnable\" error!");
+    TestAssert(ulTemp1 == UART_LCRH_FEN, "xuart API \"UARTFIFOEnable\" error!");
     //
     // test for rx trigger level config
     //
@@ -367,50 +367,50 @@ void xuart002Execute_FIFOConfig(void)
            "xuart API \"UARTFIFOLevelSet\" or "
            "\"UARTFIFOLevelGet\" error!");
     }
-		
-		UARTFIFODisable(UART_BASE);
-		ulTemp1 = xHWREG(UART_BASE + UART_LCRH) & UART_LCRH_FEN;
-		TestAssert(ulTemp1 == 0, "xuart API \"UARTFIFOEnable\" error!");
+        
+    UARTFIFODisable(UART_BASE);
+    ulTemp1 = xHWREG(UART_BASE + UART_LCRH) & UART_LCRH_FEN;
+    TestAssert(ulTemp1 == 0, "xuart API \"UARTFIFOEnable\" error!");
 }
 
 void xuart002Execute_SmartCard_Register(void)
 {
-		unsigned long ulRegVal;
-		UARTSmartCardEnable(UART_BASE);
-		ulRegVal = xHWREG(UART_BASE + UART_CTL) & UART_CTL_SMART;
-		TestAssert(ulRegVal == UART_CTL_SMART, "xuart API \"UARTSmartCardEnable\" error!");
-	
-		UARTSmartCardDisable(UART_BASE);
-		ulRegVal = xHWREG(UART_BASE + UART_CTL) & UART_CTL_SMART;
-		TestAssert(ulRegVal == 0, "xuart API \"UARTSmartCardEnable\" error!");
+    unsigned long ulRegVal;
+    UARTSmartCardEnable(UART_BASE);
+    ulRegVal = xHWREG(UART_BASE + UART_CTL) & UART_CTL_SMART;
+    TestAssert(ulRegVal == UART_CTL_SMART, "xuart API \"UARTSmartCardEnable\" error!");
+    
+    UARTSmartCardDisable(UART_BASE);
+    ulRegVal = xHWREG(UART_BASE + UART_CTL) & UART_CTL_SMART;
+    TestAssert(ulRegVal == 0, "xuart API \"UARTSmartCardEnable\" error!");
 }
 
 void xuart002Execute_SmartCard_Function(void)
 {
-		//
-		// enable smartcard 
-		//
-		UARTSmartCardEnable(UART_BASE);
-	
-		//
-		// The uart is configed as smartcard, the UnTx signal is used as a bit clock,
-		// and the UnRx signal is used as the half-duplex communication line 
-		// connected to the smartcard.
-		//
-		UARTSmartCardConfig(UART_BASE, 115200);
-	
-		//
-		// a gpio signal pin is used to generate the reset singnal to the smartcard
-		//
-		xSysCtlPeripheralEnable(xSYSCTL_PERIPH_GPIOC);
-		xGPIOSPinTypeGPIOOutput(PC4);
-	
-		
+    //
+    // enable smartcard 
+    //
+    UARTSmartCardEnable(UART_BASE);
+    
+    //
+    // The uart is configed as smartcard, the UnTx signal is used as a bit clock,
+    // and the UnRx signal is used as the half-duplex communication line 
+    // connected to the smartcard.
+    //
+    UARTSmartCardConfig(UART_BASE, 115200);
+    
+    //
+    // a gpio signal pin is used to generate the reset singnal to the smartcard
+    //
+    xSysCtlPeripheralEnable(xSYSCTL_PERIPH_GPIOC);
+    xGPIOSPinTypeGPIOOutput(PC4);
+    
+        
 }
 void xuart002Execute_SmartCard(void)
 {
-		xuart002Execute_SmartCard_Register();
-		xuart002Execute_SmartCard_Function();
+    xuart002Execute_SmartCard_Register();
+    xuart002Execute_SmartCard_Function();
 }
 //*****************************************************************************
 //
@@ -424,11 +424,11 @@ static void xuart002Execute(void)
     // FIFO config
     //
     xuart002Execute_FIFOConfig();
-		
-		//
-		// SmartCard config
-		//
-		xuart002Execute_SmartCard();		
+        
+    //
+    // SmartCard config
+    //
+    xuart002Execute_SmartCard();        
 }
 
 //
@@ -475,7 +475,7 @@ static void xuart003Setup(void)
 //*****************************************************************************
 static void xuart003TearDown(void)
 {
-		xSysCtlPeripheralDisable(xSYSCTL_PERIPH_UART);
+    xSysCtlPeripheralDisable(xSYSCTL_PERIPH_UART);
 }
 
 void xuart003Execute_IrDAConfig(void)
@@ -493,7 +493,7 @@ void xuart003Execute_IrDAConfig(void)
     ulTemp = xHWREG(UART_BASE + UART_CTL) & UART_CTL_SIRLP;
     TestAssert(ulTemp == 0,
                    "xuart API \"UARTIrDAConfig\" error!");
-		UARTIrDAConfig(UART_BASE, 115200, ulTemp, UART_IRDA_MODE_LOW_POWER);
+    UARTIrDAConfig(UART_BASE, 115200, ulTemp, UART_IRDA_MODE_LOW_POWER);
     ulTemp = xHWREG(UART_BASE + UART_CTL) & UART_CTL_SIRLP;
     TestAssert(ulTemp == UART_CTL_SIRLP,
                    "xuart API \"UARTIrDAConfig\" error!");
@@ -562,7 +562,7 @@ static void xuart004Setup(void)
 //*****************************************************************************
 static void xuart004TearDown(void)
 {
-		xSysCtlPeripheralDisable(xSYSCTL_PERIPH_UART);
+    xSysCtlPeripheralDisable(xSYSCTL_PERIPH_UART);
 }
 
 void xuart004Execute_LinConfig(void)
@@ -594,8 +594,7 @@ void xuart004Execute_LinConfig(void)
     //
     UARTLINDisable(UART_BASE);
     ulTemp = xHWREG(UART_BASE + UART_CTL) & 0x40;
-    TestAssert(ulTemp == 0,
-                   "xuart API \"UARTLINDisable\" error!");
+    TestAssert(ulTemp == 0, "xuart API \"UARTLINDisable\" error!");                 
 }
 
 //*****************************************************************************
@@ -642,7 +641,7 @@ static char* xuart005GetTest(void)
 //
 //*****************************************************************************
 static void xuart005Setup(void)
-{	    
+{        
     xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART1);
     xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART1);
 }
@@ -656,7 +655,7 @@ static void xuart005Setup(void)
 //*****************************************************************************
 static void xuart005TearDown(void)
 {
-		xSysCtlPeripheralDisable(xSYSCTL_PERIPH_UART1);
+    xSysCtlPeripheralDisable(xSYSCTL_PERIPH_UART1);
 }
 
 //*****************************************************************************
@@ -740,7 +739,7 @@ static void xuart006Setup(void)
 //*****************************************************************************
 static void xuart006TearDown(void)
 {
-		xSysCtlPeripheralDisable(xSYSCTL_PERIPH_UART1);
+    xSysCtlPeripheralDisable(xSYSCTL_PERIPH_UART1);
 }
 
 //*****************************************************************************
@@ -765,13 +764,13 @@ void xuart006Execute_ModemConfig(void)
         TestAssert(ulTemp == ulModemCfg[i],
                    "xuart API \"UARTModemControlSet\" or "
                    "\"UARTModemControlGet\" error!");   
-    	
+        
         UARTModemControlClear(xUART1_BASE, ulModemCfg[i]);
         ulTemp = (xHWREG(xUART1_BASE + UART_CTL) & ulModemCfg[i]);
         TestAssert(ulTemp == 0,
                    "xuart API \"UARTModemControlClear\" error!");
-			
-				UARTModemStatusGet(xUART1_BASE);
+            
+        UARTModemStatusGet(xUART1_BASE);
     }
 }
 //*****************************************************************************
@@ -819,7 +818,7 @@ static char* xuart007GetTest(void)
 //*****************************************************************************
 static void xuart007Setup(void)
 {
-		xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART);
+    xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART);
     xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART);
 }
 
@@ -832,7 +831,7 @@ static void xuart007Setup(void)
 //*****************************************************************************
 static void xuart007TearDown(void)
 {
-		xSysCtlPeripheralDisable(xSYSCTL_PERIPH_UART);
+    xSysCtlPeripheralDisable(xSYSCTL_PERIPH_UART);
 }
 
 //*****************************************************************************
@@ -844,27 +843,27 @@ static void xuart007TearDown(void)
 //*****************************************************************************
 void xuart007Execute_DMA_Register(void)
 {
-		unsigned long i, ulTemp;
-	
-		for(i = 0; i < DMACtlNum; i++)
-		{
-				UARTDMAEnable(UART_BASE, ulDMAFlag[i]);
-				ulTemp = (xHWREG(UART_BASE + UART_DMACTL) & ulDMAFlag[i]);
-				TestAssert(ulTemp == ulDMAFlag[i],
-										"xuart API \"UARTDMAEnable\" error!");
-		}
-		
-		for(i = 0; i < DMACtlNum; i++)
-		{
-				UARTDMADisable(UART_BASE, ulDMAFlag[i]);
-				ulTemp = (xHWREG(UART_BASE + UART_DMACTL) & ulDMAFlag[i]);
-				TestAssert(ulTemp == 0, "xuart API \"UARTDMADisable\" error!");									
-		}		
-		
-		UARTRxErrorClear(UART_BASE);
-		ulTemp = UARTRxErrorGet(UART_BASE);
-		TestAssert(ulTemp == 0, 
-								"xuart API \"UARTRxErrorClear or UARTRxErrorGet\" error!");										
+    unsigned long i, ulTemp;
+    
+    for(i = 0; i < DMACtlNum; i++)
+    {
+        UARTDMAEnable(UART_BASE, ulDMAFlag[i]);
+        ulTemp = (xHWREG(UART_BASE + UART_DMACTL) & ulDMAFlag[i]);
+        TestAssert(ulTemp == ulDMAFlag[i],
+                                "xuart API \"UARTDMAEnable\" error!");
+    }
+        
+    for(i = 0; i < DMACtlNum; i++)
+    {
+        UARTDMADisable(UART_BASE, ulDMAFlag[i]);
+        ulTemp = (xHWREG(UART_BASE + UART_DMACTL) & ulDMAFlag[i]);
+        TestAssert(ulTemp == 0, "xuart API \"UARTDMADisable\" error!");                                    
+    }        
+        
+    UARTRxErrorClear(UART_BASE);
+    ulTemp = UARTRxErrorGet(UART_BASE);
+    TestAssert(ulTemp == 0, 
+               "xuart API \"UARTRxErrorClear or UARTRxErrorGet\" error!");                                        
 }
 
 #if (xUART_CONFIG_DMA_INT)
@@ -889,9 +888,9 @@ unsigned long UARTDMACallbackFunc(void *pvCBData, unsigned long ulEvent,
 //*****************************************************************************
 void xuart007Execute_DMAInt_Function(void)
 {
-		//xSysCtlPeripheralEnable(xSYSCTL_PERIPH_DMA);
-		//xDMAEnable();
-		//UARTDMAEnable(UART_BASE, UART_DMA_TX);
+    //xSysCtlPeripheralEnable(xSYSCTL_PERIPH_DMA);
+    //xDMAEnable();
+    //UARTDMAEnable(UART_BASE, UART_DMA_TX);
 }
 #endif
 
@@ -903,9 +902,9 @@ void xuart007Execute_DMAInt_Function(void)
 //*****************************************************************************
 static void xuart007Execute(void)
 {
-		xuart007Execute_DMA_Register();
+    xuart007Execute_DMA_Register();
 #if (xUART_CONFIG_DMA_INT)
-		xuart007Execute_DMAInt_Function();	
+    xuart007Execute_DMAInt_Function();    
 #endif
 }
 

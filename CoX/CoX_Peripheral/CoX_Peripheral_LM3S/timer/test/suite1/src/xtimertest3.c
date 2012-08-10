@@ -6,7 +6,7 @@
 //!
 //! <h2>Description</h2>
 //! This module implements the test sequence for the xtimer sub component.<br><br>
-//! - \p Board: NUC140VE3CN board <br><br>
+//! - \p Board: LM3S9B96 board <br><br>
 //! - \p Last-Time(about): 0.5s <br><br>
 //! - \p Phenomenon: Success or failure information will be printed on the UART. <br><br>
 //! .
@@ -73,7 +73,7 @@ static unsigned long ulTimerID[4] = {xSYSCTL_PERIPH_TIMER0,
 static unsigned long ulTimerAIntID[8] = {xINT_TIMER0, xINT_TIMER1, 
                                          xINT_TIMER2, xINT_TIMER3};
 static unsigned long ulTimerBIntID[4] = {INT_TIMER0B, INT_TIMER1B, 
-																				 INT_TIMER2B,INT_TIMER3B};
+                                         INT_TIMER2B,INT_TIMER3B};
 
 //
 // Install callback function
@@ -125,7 +125,7 @@ static xtEventCallback TimerACallbackFunc[4] = {Timer0ACallback,
 //*****************************************************************************
 void EdgeGenerate(void)                                       
 {
-		unsigned char i;
+    unsigned char i;
     //
     // Set the  pin to high
     //
@@ -154,10 +154,10 @@ void EdgeGenerate(void)
 //*****************************************************************************
 void GPIOInit()
 {
-		//
+    //
     // PB2 used to output falling edge as the timer count source.
     //
-		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);//开启GPIOB时钟
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);//开启GPIOB时钟
     xGPIODirModeSet(GPIO_PORTB_BASE, GPIO_PIN_7, GPIO_DIR_MODE_OUT);
     xGPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_7, 1);
 }
@@ -183,11 +183,11 @@ static char* xTimer003GetTest(void)
 //*****************************************************************************
 static void xTimer003Setup(void)
 {
-		unsigned char i;
-	
-		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);//开启GPIOA时钟
-		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);//开启GPIOD时钟
-		//
+    unsigned char i;
+    
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+    //
     // Turn a pin to an GPIO Timer input or output pin.
     //
     xSPinTypeTimer(TIMCCP0, PD4);
@@ -195,12 +195,12 @@ static void xTimer003Setup(void)
     
     GPIOInit();
     
-		//
+    //
     // Enable the tiemr0-3 peripheral
     //
     for(i = 0; i < 4; i++)
     {   
-				xSysCtlPeripheralReset(ulTimerID[i]);
+        xSysCtlPeripheralReset(ulTimerID[i]);
         xSysCtlPeripheralEnable(ulTimerID[i]);       
     }
 }
@@ -214,7 +214,7 @@ static void xTimer003Setup(void)
 //*****************************************************************************
 static void xTimer003TearDown(void)
 {
-		unsigned char i;
+        unsigned char i;
     //
     // Enable the tiemr0-3 peripheral
     //
@@ -237,49 +237,49 @@ static void xTimer003Execute(void)
     unsigned char i;
     
     //xtBoolean xbTimerIntStatus;
-	
-		//
+    
+    //
     // Test the event count function test. You should connect the PB7 to the
     // corresponding TM pin as the count source.
     //   
-		
-		TimerIntClear(TIMER0_BASE, TIMER_B, TIMER_INT_CAP_MATCH);
-		
-		// 
-		// Mode set test
-		//
-		TimerInitConfig(TIMER0_BASE, TIMER_B, TIMER_MODE_CAPTURE, 10);
-		TimerCaptureModeSet(TIMER0_BASE, TIMER_B, TIMER_CAP_COUNT);
-		TimerLoadSet(TIMER0_BASE,TIMER_B,10);
-		TimerMatchSet(TIMER0_BASE, TIMER_B, 5);
-		
-		//
-		// Select the falling event count phase
-		//
-		TimerCounterDetectPhaseSelect(TIMER0_BASE, TIMER_B, TIMER_COUNTER_RISING);
-		
-		TimerIntEnable(TIMER0_BASE, TIMER_B, TIMER_INT_CAP_MATCH);
-		
-		//
-		// Enable event count mode
-		//
-		TimerStart(TIMER0_BASE, TIMER_B);
-		
-		while(!xTimerStatusGet(TIMER0_BASE, TIMER_B, TIMER_INT_CAP_MATCH))
-		{
-				EdgeGenerate();
-		}
-		TimerIntClear(TIMER0_BASE, TIMER_B, TIMER_INT_CAP_MATCH);
-		
-		TimerIntDisable(TIMER0_BASE, TIMER_B, TIMER_INT_CAP_MATCH);  
+        
+    TimerIntClear(TIMER0_BASE, TIMER_B, TIMER_INT_CAP_MATCH);
+        
+    // 
+    // Mode set test
+    //
+    TimerInitConfig(TIMER0_BASE, TIMER_B, TIMER_MODE_CAPTURE, 10);
+    TimerCaptureModeSet(TIMER0_BASE, TIMER_B, TIMER_CAP_COUNT);
+    TimerLoadSet(TIMER0_BASE,TIMER_B,10);
+    TimerMatchSet(TIMER0_BASE, TIMER_B, 5);
+        
+    //
+    // Select the falling event count phase
+    //
+    TimerCounterDetectPhaseSelect(TIMER0_BASE, TIMER_B, TIMER_COUNTER_RISING);
+        
+    TimerIntEnable(TIMER0_BASE, TIMER_B, TIMER_INT_CAP_MATCH);
+        
+    //
+    // Enable event count mode
+    //
+    TimerStart(TIMER0_BASE, TIMER_B);
+        
+    while(!xTimerStatusGet(TIMER0_BASE, TIMER_B, TIMER_INT_CAP_MATCH))
+    {
+        EdgeGenerate();
+    }
+    TimerIntClear(TIMER0_BASE, TIMER_B, TIMER_INT_CAP_MATCH);
+        
+    TimerIntDisable(TIMER0_BASE, TIMER_B, TIMER_INT_CAP_MATCH);  
    
     //
     // Input capture time mode function test
     //    
-		//for (i = 0; i< 4; i++)
+    //for (i = 0; i< 4; i++)
     //{
         ulBase = ulTimerBase[0];
-				i = 0;
+        i = 0;
         
         //
         // Clear the flag first
@@ -287,14 +287,14 @@ static void xTimer003Execute(void)
         TimerIntClear(ulBase, TIMER_A, TIMER_INT_CAP_EVENT);
         while(xTimerStatusGet(ulBase, TIMER_A, TIMER_INT_CAP_EVENT));
         
-				TimerInitConfig(ulBase, TIMER_A, TIMER_MODE_CAPTURE, 10);
-				TimerCaptureModeSet(ulBase, TIMER_A, TIMER_CAP_TIME);
+        TimerInitConfig(ulBase, TIMER_A, TIMER_MODE_CAPTURE, 10);
+        TimerCaptureModeSet(ulBase, TIMER_A, TIMER_CAP_TIME);
         //
         // Capture detect edge set both
         //
         xTimerCaptureEdgeSelect(ulBase, TIMER_A, TIMER_CAP_BOTH);
         TimerLoadSet(ulBase, TIMER_A, 0xFFFF);
-				
+                
         //
         // Enable the capture Int
         //
@@ -312,27 +312,26 @@ static void xTimer003Execute(void)
         //
         //TestAssertQBreak("b","One shot mode Intterrupt test fail", 1);
         //xbTimerIntStatus = xTimerStatusGet(ulBase, TIMER_A, TIMER_INT_CAP_EVENT);
-				
+                
         TimerIntClear(ulBase, TIMER_A, TIMER_INT_CAP_EVENT);
         TimerIntDisable(ulBase, TIMER_A, TIMER_INT_CAP_EVENT);
         xIntDisable(ulTimerAIntID[i]);
     //}
-		
-		//
+        
+    //
     // PWM mode test
     //    
-		//for (i = 0; i< 4; i++)
+    //for (i = 0; i< 4; i++)
     //{
         ulBase = ulTimerBase[0];
         
-				// T = 1ms, duty cycle = 33%.
-				TimerInitConfig(ulBase, TIMER_A, TIMER_MODE_PWM, 1000);
-				TimerMatchSet(ulBase, TIMER_A, 2666);
+        // T = 1ms, duty cycle = 33%.
+        TimerInitConfig(ulBase, TIMER_A, TIMER_MODE_PWM, 1000);
+        TimerMatchSet(ulBase, TIMER_A, 2666);
         //
         // Enable the capture mode, Start the timer.
         //
-        xTimerStart(ulBase, TIMER_A);      
-        
+        xTimerStart(ulBase, TIMER_A);            
     //}
 }
 
@@ -340,10 +339,10 @@ static void xTimer003Execute(void)
 // xtimer register test case struct.
 //
 const tTestCase sTestxTimer003Function = {
-		xTimer003GetTest,
-		xTimer003Setup,
-		xTimer003TearDown,
-		xTimer003Execute
+    xTimer003GetTest,
+    xTimer003Setup,
+    xTimer003TearDown,
+    xTimer003Execute
 };
 
 //

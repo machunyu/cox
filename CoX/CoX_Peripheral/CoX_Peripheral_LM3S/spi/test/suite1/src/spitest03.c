@@ -51,7 +51,7 @@
 static unsigned long ulSPI[2] = {xSPI0_BASE,xSPI1_BASE};
 
 static unsigned long ulSourceData[] = {135, 140, 145, 150,
-																			 155, 160, 165, 170};
+                                       155, 160, 165, 170};
 static unsigned long ulDestData[16];
 
 static unsigned long ulIntFlags[] = {SSI_TXFF, SSI_RXFF, SSI_RXTO, SSI_RXOR};
@@ -65,14 +65,14 @@ static unsigned long Rx_Idx=0, Tx_Idx = 0, ulFlag = 0;
 //
 //*****************************************************************************
 unsigned long SPI0Callback(void *pvCBData, unsigned long ulEvent,
-													unsigned long ulMsgParam, void *pvMsgData)
+                                                    unsigned long ulMsgParam, void *pvMsgData)
 {                                      
     ulDestData[Rx_Idx++] = xSPISingleDataReadWrite(xSPI0_BASE, ulSourceData[Tx_Idx++]); 
-		if(Tx_Idx == 8)
-		{
-				ulFlag = 1;
-				xSPIIntDisable(xSPI0_BASE, SSI_TXFF|SSI_RXFF);
-		}
+    if(Tx_Idx == 8)
+    {
+        ulFlag = 1;
+        xSPIIntDisable(xSPI0_BASE, SSI_TXFF|SSI_RXFF);
+    }
     return 0;
 }
 
@@ -98,9 +98,9 @@ static char* xSPI004GetTest(void)
 static void xSPI004Setup(void)
 {   
     SysCtlPeripheralReset(SYSCTL_PERIPH_SSI0);
-		SysCtlPeripheralReset(SYSCTL_PERIPH_SSI1);
+    SysCtlPeripheralReset(SYSCTL_PERIPH_SSI1);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
-		SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI1);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI1);
 }
 
 //*****************************************************************************
@@ -113,7 +113,7 @@ static void xSPI004Setup(void)
 static void xSPI004TearDown(void)
 {      
     SysCtlPeripheralDisable(SYSCTL_PERIPH_SSI0);
-		SysCtlPeripheralDisable(SYSCTL_PERIPH_SSI1);
+    SysCtlPeripheralDisable(SYSCTL_PERIPH_SSI1);
 }
 
 //*****************************************************************************
@@ -125,69 +125,69 @@ static void xSPI004TearDown(void)
 //*****************************************************************************
 static void xspi004_IntRegister_test(void)
 {
-		unsigned long i, j, ulRegVal;
-	
-		for(i = 0; i < 2; i++)
-		{
-				for(j = 0;j < 4; j++)
-				{
-						SSIIntEnable(ulSPI[i],ulIntFlags[j]);
-						ulRegVal = xHWREG(ulSPI[i] + SSI_IM) & ulIntFlags[j];
-						TestAssert(ulRegVal == ulIntFlags[j], "xspi API error!");
-				}	
-				
-				for(j = 2;j < 4; j++)
-				{
-						SSIIntClear(ulSPI[i],ulIntFlags[j]);
-						ulRegVal = SSIIntStatus(ulSPI[i], 1) & ulIntFlags[j];
-						TestAssert(ulRegVal == 0, "xspi API error!");
-				}	
-				
-				for(j = 0;j < 4; j++)
-				{
-						SSIIntDisable(ulSPI[i],ulIntFlags[j]);
-						ulRegVal = xHWREG(ulSPI[i] + SSI_IM) & ulIntFlags[j];
-						TestAssert(ulRegVal == 0, "xspi API error!");
-				}
-		}
+    unsigned long i, j, ulRegVal;
+    
+    for(i = 0; i < 2; i++)
+    {
+        for(j = 0;j < 4; j++)
+        {
+            SSIIntEnable(ulSPI[i],ulIntFlags[j]);
+            ulRegVal = xHWREG(ulSPI[i] + SSI_IM) & ulIntFlags[j];
+            TestAssert(ulRegVal == ulIntFlags[j], "xspi API error!");
+        }    
+                
+        for(j = 2;j < 4; j++)
+        {
+            SSIIntClear(ulSPI[i],ulIntFlags[j]);
+            ulRegVal = SSIIntStatus(ulSPI[i], 1) & ulIntFlags[j];
+            TestAssert(ulRegVal == 0, "xspi API error!");
+        }    
+                
+        for(j = 0;j < 4; j++)
+        {
+            SSIIntDisable(ulSPI[i],ulIntFlags[j]);
+            ulRegVal = xHWREG(ulSPI[i] + SSI_IM) & ulIntFlags[j];
+            TestAssert(ulRegVal == 0, "xspi API error!");
+        }
+    }
 }
 
 static void xspi004_MasterIntFunction(void)
 {
-		unsigned long i;
-	
-		//
+    unsigned long i;
+    
+    //
     // Configure Some GPIO pins as SPI Mode
     //    
     xSPinTypeSPI(SPI0CLK, PA2);
-		xSPinTypeSPI(SPI0CS, PA3);
-		xSPinTypeSPI(SPI0RX, PA4);
+    xSPinTypeSPI(SPI0CS, PA3);
+    xSPinTypeSPI(SPI0RX, PA4);
     xSPinTypeSPI(SPI0TX, PA5);    
     
     //
     // Master Mode polarity 0,Rx latched at rising edge Tx changed at rising edge
     // 2000000Hz 8Bits Data windth SPI MSB First
     //  
-    xSPIConfigSet(xSPI0_BASE, 20000, xSPI_MOTO_FORMAT_MODE_0 	| 
-																		 xSPI_MODE_MASTER					|
-																		 xSPI_DATA_WIDTH8);
-	
-		xHWREG(xSPI0_BASE + SSI_CR1) |= SSI_CR1_LBM;
-		xSPIEnable(xSPI0_BASE);
-	
+    xSPIConfigSet(xSPI0_BASE, 20000, xSPI_MOTO_FORMAT_MODE_0     | 
+                                     xSPI_MODE_MASTER            |
+                                     xSPI_DATA_WIDTH8);
+    
+    xHWREG(xSPI0_BASE + SSI_CR1) |= SSI_CR1_LBM;
+    xSPIEnable(xSPI0_BASE);
+    
     xIntEnable(INT_SSI0);   
     xIntPrioritySet(INT_SSI0, 1); 
-		xSPIIntCallbackInit(xSPI0_BASE, SPI0Callback);
+    xSPIIntCallbackInit(xSPI0_BASE, SPI0Callback);
     xSPIIntEnable(xSPI0_BASE, SSI_TXFF|SSI_RXFF);      
    
     while(!ulFlag);
-		
+        
     for(i = 0; i < 8; i++)
     {
         TestAssert((ulSourceData[i] == ulDestData[i]), "xspi API error!");
     }
-		
-		xHWREG(xSPI0_BASE + SSI_CR1) &= ~SSI_CR1_LBM;
+        
+    xHWREG(xSPI0_BASE + SSI_CR1) &= ~SSI_CR1_LBM;
 }
 //*****************************************************************************
 //
@@ -198,7 +198,7 @@ static void xspi004_MasterIntFunction(void)
 //*****************************************************************************
 static void xspi004_MasterInt_test(void)
 {
-		xspi004_MasterIntFunction();	
+    xspi004_MasterIntFunction();    
 }
 
 //*****************************************************************************
@@ -211,36 +211,36 @@ static void xspi004_MasterInt_test(void)
 static void xspi004_SpiLoopback_test(void)
 {
     unsigned long i, j;
-		
-		for(i = 0; i < 2; i++)
-		{
-				xSPIConfigSet(ulSPI[i], 2000000, xSPI_MOTO_FORMAT_MODE_0 	| 
-																				 xSPI_MODE_MASTER					|
-																				 xSPI_DATA_WIDTH8);
-				//
-				// make ssi run as loopback test mode
-				//
-				xHWREG(ulSPI[i] + SSI_CR1) |= SSI_CR1_LBM;
-			
-				SSIEnable(ulSPI[i]);
-				
-				for(j = 0; j < 8; j++)
-				{
-						ulDestData[j] = 0;
-				}
-				
-				for(j = 0; j < 8; j++)
-				{
-						ulDestData[j] = SSISingleDataReadWrite(ulSPI[i], ulSourceData[j]);
-				}    
-				
-				for(j = 0; j < 8; j++)
-				{
-						TestAssert((ulSourceData[j] == ulDestData[j]), "xspi API error!");
-				}
-				
-				xHWREG(ulSPI[i] + SSI_CR1) &= ~SSI_CR1_LBM;
-		}
+        
+    for(i = 0; i < 2; i++)
+    {
+        xSPIConfigSet(ulSPI[i], 2000000, xSPI_MOTO_FORMAT_MODE_0     | 
+                                         xSPI_MODE_MASTER            |
+                                         xSPI_DATA_WIDTH8);
+        //
+        // make ssi run as loopback test mode
+        //
+        xHWREG(ulSPI[i] + SSI_CR1) |= SSI_CR1_LBM;
+            
+        SSIEnable(ulSPI[i]);
+                
+        for(j = 0; j < 8; j++)
+        {
+            ulDestData[j] = 0;
+         }
+                
+        for(j = 0; j < 8; j++)
+        {
+            ulDestData[j] = SSISingleDataReadWrite(ulSPI[i], ulSourceData[j]);
+        }    
+                
+        for(j = 0; j < 8; j++)
+        {
+            TestAssert((ulSourceData[j] == ulDestData[j]), "xspi API error!");
+        }
+                
+        xHWREG(ulSPI[i] + SSI_CR1) &= ~SSI_CR1_LBM;
+    }
 }
 
 //*****************************************************************************
@@ -252,8 +252,8 @@ static void xspi004_SpiLoopback_test(void)
 //*****************************************************************************
 static void xSPI004Execute(void)
 {
-		xspi004_IntRegister_test();
-		xspi004_SpiLoopback_test();
+    xspi004_IntRegister_test();
+    xspi004_SpiLoopback_test();
     xspi004_MasterInt_test();  
 }
 

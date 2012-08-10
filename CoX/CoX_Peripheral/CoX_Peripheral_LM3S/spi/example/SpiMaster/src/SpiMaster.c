@@ -36,13 +36,13 @@ unsigned long ulDestData[8];
 //*****************************************************************************
 void SpiReceiveTransferInit(void)
 {
-		unsigned long ulTemp;
-	
+    unsigned long ulTemp;
+    
     //
     // Set SysClk 50MHz using Extern 16M oscillator
     //
     xSysCtlClockSet(50000000, xSYSCTL_OSC_MAIN | xSYSCTL_XTAL_16MHZ | SYSCTL_INT_OSC_DIS);
-	
+    
     //
     // Enable Peripheral SPI0
     //
@@ -50,23 +50,23 @@ void SpiReceiveTransferInit(void)
     xSysCtlPeripheralEnable(xSYSCTL_PERIPH_SPI0);
     xSysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
 
-		ulTemp = (xSPI_MOTO_FORMAT_MODE_0 | xSPI_MODE_MASTER | xSPI_DATA_WIDTH8);
-		xSPIConfigSet(xSPI0_BASE, 2000000, ulTemp);
-	
+    ulTemp = (xSPI_MOTO_FORMAT_MODE_0 | xSPI_MODE_MASTER | xSPI_DATA_WIDTH8);
+    xSPIConfigSet(xSPI0_BASE, 2000000, ulTemp);
+    
     //
     // Configure Some GPIO pins as SPI Mode
     //
     xSPinTypeSPI(SPI0CLK, PA2);
-		xSPinTypeSPI(SPI0CS, PA3);
-		xSPinTypeSPI(SPI0RX, PA4);
-		xSPinTypeSPI(SPI0TX, PA5);	
-		
-		//
-		// make ssi run as loopback test mode
-		//
-		xHWREG(xSPI0_BASE + SSI_CR1) |= SSI_CR1_LBM;
-		
-		SSIEnable(xSPI0_BASE);
+    xSPinTypeSPI(SPI0CS, PA3);
+    xSPinTypeSPI(SPI0RX, PA4);
+    xSPinTypeSPI(SPI0TX, PA5);    
+        
+    //
+    // make ssi run as loopback test mode
+    //
+    xHWREG(xSPI0_BASE + SSI_CR1) |= SSI_CR1_LBM;
+        
+    SSIEnable(xSPI0_BASE);
 }
 //*****************************************************************************
 //
@@ -82,8 +82,8 @@ void SpiReceiveTransferInit(void)
 //*****************************************************************************
 void SpiSlaveModeConfig(void)
 {   
-		unsigned long i;
-	
+    unsigned long i;
+    
     for(i = 0; i < 8; i++)
     {
         ulDestData[i] = xSPISingleDataReadWrite(xSPI0_BASE, ulSourceData[i]);

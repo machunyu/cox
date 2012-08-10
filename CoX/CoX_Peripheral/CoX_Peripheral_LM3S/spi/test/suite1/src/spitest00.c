@@ -95,7 +95,7 @@ static char* xSpi001GetTest(void)
 static void xSpi001Setup(void)
 {
     // Enable Peripheral SPI0 and SPI1.
-		SysCtlPeripheralReset(SYSCTL_PERIPH_SSI0);
+    SysCtlPeripheralReset(SYSCTL_PERIPH_SSI0);
     SysCtlPeripheralReset(SYSCTL_PERIPH_SSI1);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI1);  
@@ -123,23 +123,23 @@ static void xSpi001TearDown(void)
 //*****************************************************************************
 static void xspi001_SpiMasterSlaveModeSelect_test(void)
 {
-	unsigned long i, j,ulRegVal, ulTemp;
+    unsigned long i, j,ulRegVal, ulTemp;
 
-	//
-	// Test Seting MCU as MASTER/SLAVE Mode
-	//
-	for(i = 0; i < 2; i++)
-	{
-		for(j = 0; j < 2; j++)
-		{
-			//xHWREG(ulSPI[i] + SSI_CR1) &= ~SSI_CR1_SSE;
-			ulTemp = (xSPI_MOTO_FORMAT_MODE_0 | (ulSSIOperationMode[j] << 8) | xSPI_DATA_WIDTH8);
-			xSPIConfigSet(ulSPI[i], 120000, ulTemp);
-			ulRegVal = xHWREG(ulSPI[i] + SSI_CR1);
-			TestAssert(((ulRegVal >> 2) & ulSSIOperationMode[j]) == ulSSIOperationMode[j], 
-												"xspi API error!");
-		}
-	}
+    //
+    // Test Seting MCU as MASTER/SLAVE Mode
+    //
+    for(i = 0; i < 2; i++)
+    {
+        for(j = 0; j < 2; j++)
+        {
+            //xHWREG(ulSPI[i] + SSI_CR1) &= ~SSI_CR1_SSE;
+            ulTemp = (xSPI_MOTO_FORMAT_MODE_0 | (ulSSIOperationMode[j] << 8) | xSPI_DATA_WIDTH8);
+            xSPIConfigSet(ulSPI[i], 120000, ulTemp);
+            ulRegVal = xHWREG(ulSPI[i] + SSI_CR1);
+            TestAssert(((ulRegVal >> 2) & ulSSIOperationMode[j]) == ulSSIOperationMode[j], 
+                                                "xspi API error!");
+        }
+    }
 }
 
 //*****************************************************************************
@@ -153,19 +153,19 @@ static void xspi001_SpiDataWidthSet_test(void)
 {
     unsigned long i, j, ulTemp, ulRegVal;
     
-		//
-		// SPI DataWidth Set Test
-		// 
-		for(j = 0; j < 2; j++)
-		{
-				for(i = 0; i < 13; i++)
-				{
-						ulTemp = (xSPI_MOTO_FORMAT_MODE_0 | xSPI_MODE_SLAVE | ulDataWidthTable[i]);
-						xSPIConfigSet(ulSPI[j], 120000, ulTemp);
-						ulRegVal = xSPIBitLengthGet(ulSPI[j]) & 0x1f;
-						TestAssert((ulDataWidthTable[i] == ulRegVal), "xspi API error!");
-				}
-		}
+    //
+    // SPI DataWidth Set Test
+    // 
+    for(j = 0; j < 2; j++)
+    {
+        for(i = 0; i < 13; i++)
+        {
+            ulTemp = (xSPI_MOTO_FORMAT_MODE_0 | xSPI_MODE_SLAVE | ulDataWidthTable[i]);
+            xSPIConfigSet(ulSPI[j], 120000, ulTemp);
+            ulRegVal = xSPIBitLengthGet(ulSPI[j]) & 0x1f;
+            TestAssert((ulDataWidthTable[i] == ulRegVal), "xspi API error!");
+        }
+    }
 }
 
 //*****************************************************************************
@@ -178,32 +178,32 @@ static void xspi001_SpiDataWidthSet_test(void)
 static void xspi001_SpiFormatModeSet_test(void)
 {
     unsigned long i, j, ulTemp, ulRegVal;
-		
-		//
-		// SPI FormatMode Set Test
-		// 
-		for(j = 0; j < 2; j++)
-		{
-				for(i = 0;i < 4; i++)
-				{
-						ulTemp = (ulSpiFormatMode[i] | xSPI_MODE_SLAVE | xSPI_DATA_WIDTH8);
-						xSPIConfigSet(ulSPI[j], 120000, ulTemp);
-						ulRegVal = xHWREG(ulSPI[j] + SSI_CR0);
-						ulTemp = ulRegVal & 0x30;
-						TestAssert(ulTemp == 0,"xspi API error!"); 
-						ulRegVal >>= 6;
-						ulRegVal &= 0x03;						
-						TestAssert(ulRegVal == (ulSpiFormatMode[i] >> 16),"xspi API error!"); 
-				}
-				for(i = 4; i < 6; i++)
-				{
-						ulTemp = (ulSpiFormatMode[i] | xSPI_MODE_SLAVE | xSPI_DATA_WIDTH8);
-						xSPIConfigSet(ulSPI[j], 120000, ulTemp);
-						ulRegVal = xHWREG(ulSPI[j] + SSI_CR0);
-						ulRegVal &= 0x30;
-						TestAssert(ulRegVal  == (ulSpiFormatMode[i] >> 16),"xspi API error!"); 
-				}
-		}
+        
+    //
+    // SPI FormatMode Set Test
+    // 
+    for(j = 0; j < 2; j++)
+    {
+        for(i = 0;i < 4; i++)
+        {
+            ulTemp = (ulSpiFormatMode[i] | xSPI_MODE_SLAVE | xSPI_DATA_WIDTH8);
+            xSPIConfigSet(ulSPI[j], 120000, ulTemp);
+            ulRegVal = xHWREG(ulSPI[j] + SSI_CR0);
+            ulTemp = ulRegVal & 0x30;
+            TestAssert(ulTemp == 0,"xspi API error!"); 
+            ulRegVal >>= 6;
+            ulRegVal &= 0x03;                        
+            TestAssert(ulRegVal == (ulSpiFormatMode[i] >> 16),"xspi API error!"); 
+        }
+        for(i = 4; i < 6; i++)
+        {
+            ulTemp = (ulSpiFormatMode[i] | xSPI_MODE_SLAVE | xSPI_DATA_WIDTH8);
+            xSPIConfigSet(ulSPI[j], 120000, ulTemp);
+            ulRegVal = xHWREG(ulSPI[j] + SSI_CR0);
+            ulRegVal &= 0x30;
+            TestAssert(ulRegVal  == (ulSpiFormatMode[i] >> 16),"xspi API error!"); 
+        }
+    }
 }
 
 //*****************************************************************************
@@ -215,30 +215,30 @@ static void xspi001_SpiFormatModeSet_test(void)
 //*****************************************************************************
 static void xSpi001Execute(void)
 {
-		unsigned long i, ulRegVal;
-		
-		//
-		// SPI Enable Test
-		// 
-		for(i = 0; i < 2; i++)
+    unsigned long i, ulRegVal;
+        
+    //
+    // SPI Enable Test
+    // 
+    for(i = 0; i < 2; i++)
     {
-				SSIEnable(ulSPI[i]);
-				ulRegVal = xHWREG(ulSPI[i] + SSI_CR1) & SSI_CR1_SSE;
-				TestAssert(ulRegVal == SSI_CR1_SSE, "xspi API error!");
-		}																	
+        SSIEnable(ulSPI[i]);
+        ulRegVal = xHWREG(ulSPI[i] + SSI_CR1) & SSI_CR1_SSE;
+        TestAssert(ulRegVal == SSI_CR1_SSE, "xspi API error!");
+    }                                                                    
     xspi001_SpiMasterSlaveModeSelect_test();
     xspi001_SpiDataWidthSet_test();
     xspi001_SpiFormatModeSet_test();
-		
-		//
-		// SPI Disable Test
-		// 
-		for(i = 0; i < 2; i++)
+        
+    //
+    // SPI Disable Test
+    // 
+    for(i = 0; i < 2; i++)
     {
-				SSIDisable(ulSPI[i]);
-				ulRegVal = xHWREG(ulSPI[i] + SSI_CR1) & SSI_CR1_SSE;
-				TestAssert(ulRegVal == 0, "xspi API error!");
-		}	
+        SSIDisable(ulSPI[i]);
+        ulRegVal = xHWREG(ulSPI[i] + SSI_CR1) & SSI_CR1_SSE;
+        TestAssert(ulRegVal == 0, "xspi API error!");
+    }    
 }
 
 //

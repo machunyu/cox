@@ -490,8 +490,8 @@ SSIConfigSetExpClk(unsigned long ulBase, unsigned long ulSSIClk,
     xASSERT((ulSSIClk / ulBitRate) <= (254 * 256));
     xASSERT((ulDataWidth >= 4) && (ulDataWidth <= 16));
 
-		xHWREG(ulBase + SSI_CR1) &= ~SSI_CR1_SSE;
-		
+    xHWREG(ulBase + SSI_CR1) &= ~SSI_CR1_SSE;
+        
     //
     // Set the mode.
     //

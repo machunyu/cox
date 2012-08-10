@@ -39,8 +39,8 @@ void UartPrintf(void)
     //Set System Clock
     //
     xSysCtlClockSet(50000000, xSYSCTL_XTAL_16MHZ | 
-															xSYSCTL_OSC_MAIN   | 
-															xSYSCTL_INT_OSC_DIS);
+                              xSYSCTL_OSC_MAIN   | 
+                              xSYSCTL_INT_OSC_DIS);
  
     xSysCtlDelay(10000);
 
