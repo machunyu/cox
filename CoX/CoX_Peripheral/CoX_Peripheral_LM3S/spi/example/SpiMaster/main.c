@@ -17,7 +17,7 @@ int main()
 {
     SpiReceiveTransferInit();
 	
-		while(1)
+    while(1)
     {
         SpiSlaveModeConfig();
     }

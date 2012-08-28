@@ -182,13 +182,13 @@ xDMARequestValid(unsigned long ulRequest)
            (ulRequest == xDMA_REQUEST_UART0_RX) ||
            (ulRequest == xDMA_REQUEST_UART0_TX) || 
            (ulRequest == xDMA_REQUEST_UART1_RX) || 
-           (ulRequest == xDMA_REQUEST_UART1_RX) || 
+           (ulRequest == xDMA_REQUEST_UART1_TX) || 
            (ulRequest == xDMA_REQUEST_UART2_RX) || 
            (ulRequest == xDMA_REQUEST_UART2_TX) || 
            (ulRequest == xDMA_REQUEST_SPI0_RX)  ||     
            (ulRequest == xDMA_REQUEST_SPI0_TX)  ||
            (ulRequest == xDMA_REQUEST_SPI1_RX)  ||
-           (ulRequest == xDMA_REQUEST_SPI0_TX)  ||
+           (ulRequest == xDMA_REQUEST_SPI1_TX)  ||
            (ulRequest == xDMA_REQUEST_IIS0_RX)  ||    
            (ulRequest == xDMA_REQUEST_IIS0_TX)        
           );
@@ -368,7 +368,7 @@ xDMAChannelDynamicAssign(unsigned long ulDMASrcRequest,
         return xDMA_CHANNEL_NOT_EXIST;
     }
 
-    if(!(ulDMASrcRequest & xDMA_REQUEST_MEM) && ulDMASrcRequest & 0x40000000)
+    if(!(ulDMASrcRequest & xDMA_REQUEST_MEM) && !(ulDMASrcRequest & 0x40000000))
     {
         //
         // first check the primary assignment 
@@ -415,7 +415,7 @@ xDMAChannelDynamicAssign(unsigned long ulDMASrcRequest,
     // DestRequest is not Mem and DestRequest is Rx Type
     //
     if(!(ulDMADestRequest & xDMA_REQUEST_MEM) && 
-       !(ulDMADestRequest & 0x40000000))
+       (ulDMADestRequest & 0x40000000))
     {
         //
         // first check the primary assignment 
@@ -2019,6 +2019,3 @@ uDMAChannelSelectDefault(unsigned long ulDefPeriphs)
     //
     xHWREG(UDMA_CHASGN) &= ~ulDefPeriphs;
 }
-
-
-

@@ -478,6 +478,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\libcox\xsysctl.c</FilePath>
             </File>
+            <File>
+              <FileName>xdma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\libcox\xdma.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
