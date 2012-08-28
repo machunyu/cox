@@ -1,0 +1,46 @@
+<?xml version="2.0" ?>
+<Component>
+    <Name>COX.Peripheral.LM3S.xDMA</Name>
+    <Description>LM3S DMA Driver</Description>
+    <Category>Peripheral.COX</Category>
+    <Version>2.0.0</Version>
+    <Tags>COX, xDMA, DMA</Tags>
+
+    <Files>
+        <File>..\..\libcox\xdma.h</File>
+        <File>..\..\libcox\xdma.c</File>
+    </Files>
+
+    <FilesCoIDE>
+        <File>$PROJECT_ROOT$\COX\COX_Peripheral\src\xdma.h</File>
+        <File>$PROJECT_ROOT$\COX\COX_Peripheral\inc\xdma.c</File>
+    </FilesCoIDE>
+
+    <Dependencys>
+        <Dependency>COX.Peripheral.LM3S.xStartup</Dependency>
+        <Dependency>COX.Peripheral.LM3S.xLowLayer</Dependency>
+		<Dependency>COX.Peripheral.LM3S.xSysCtl</Dependency>
+		<Dependency>COX.Peripheral.LM3S.xGPIO</Dependency>
+    </Dependencys>
+
+    <SupportDevices>
+        <Series>
+            <Serie exclude="">LM3S</Serie>
+        </Series>
+        <Devices>
+            <Device></Device>
+        </Devices>
+    </SupportDevices>
+
+    <Micros>
+        <Comm>
+            <Define></Define>
+        </Comm>
+        <Device name="">
+            <Define></Define>
+        </Device>   
+    </Micros>
+
+    <Help>$DOCUMENT_ROOT$\xDMA</Help>
+
+</Component>
