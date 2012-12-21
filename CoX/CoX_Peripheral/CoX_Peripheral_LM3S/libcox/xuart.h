@@ -83,7 +83,7 @@
 //! If the UART Using the DMA feather and interrupt enable, please set the config
 //! to 1, else 0
 //
-#define xUART_CONFIG_DMA_INT    1
+#define xUART_CONFIG_DMA_INT    0
 
 //*****************************************************************************
 //

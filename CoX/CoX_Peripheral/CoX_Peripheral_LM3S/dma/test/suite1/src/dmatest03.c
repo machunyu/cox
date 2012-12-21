@@ -188,25 +188,25 @@ static void xDma004TearDown(void)
 //*****************************************************************************
 static void xdma004_uDMATransfer_Test(void)
 {
-	  unsigned long i, ulTemp;
+    unsigned long i, ulTemp;
 	
-	  uDMAEnable();
+    uDMAEnable();
  
     uDMAControlBaseSet(ucDMAControlTable);
 	
-	  //uDMAChannelAttributeDisable(UDMA_CHANNEL_SW, UDMA_CONFIG_ALL);
+    //uDMAChannelAttributeDisable(UDMA_CHANNEL_SW, UDMA_CONFIG_ALL);
 
     ulTemp = (UDMA_SIZE_32 | UDMA_SRC_INC_32 | UDMA_DST_INC_32);
     uDMAChannelControlSet(UDMA_CHANNEL_SW | UDMA_PRI_SELECT, ulTemp);                                                                           																													
     uDMAChannelTransferSet(UDMA_CHANNEL_SW, UDMA_MODE_AUTO, ulSrcTemp, ulDestTemp ,64);
 	
-	  uDMAChannelEnable(UDMA_CHANNEL_SW);
-	  uDMAChannelRequest(UDMA_CHANNEL_SW);
+    uDMAChannelEnable(UDMA_CHANNEL_SW);
+    uDMAChannelRequest(UDMA_CHANNEL_SW);
 	
-	  for(i = 0;i < 64;i++)
-		{
-				TestAssert((ulSrcTemp[i] == ulDestTemp[i]), "dma API error!");
-		}
+    for(i = 0;i < 64;i++)
+    {
+        TestAssert((ulSrcTemp[i] == ulDestTemp[i]), "dma API error!");
+    }
 }
 
 //*****************************************************************************
@@ -241,22 +241,22 @@ static void xdma004_uDMAInterrupt_Test(void)
 {
     unsigned int i, ulTemp;
     
-	  for(i = 0;i < 64;i++)
-			ulDestTemp[i] =0;
+    for(i = 0;i < 64;i++)
+        ulDestTemp[i] =0;
 	
-	  uDMAEnable();
+	uDMAEnable();
 
-		ulTemp = (UDMA_SIZE_32 | UDMA_SRC_INC_32 | UDMA_DST_INC_32);
+    ulTemp = (UDMA_SIZE_32 | UDMA_SRC_INC_32 | UDMA_DST_INC_32);
     uDMAChannelControlSet(UDMA_CHANNEL_SW | UDMA_PRI_SELECT, ulTemp);  
-		uDMAChannelTransferSet(UDMA_CHANNEL_SW, UDMA_MODE_AUTO, ulSrcTemp, ulDestTemp ,64);
+    uDMAChannelTransferSet(UDMA_CHANNEL_SW, UDMA_MODE_AUTO, ulSrcTemp, ulDestTemp ,64);
  
-	  xDMAChannelIntCallbackInit(UDMA_CHANNEL_SW, DmaCallbackFunc[0]);
+    xDMAChannelIntCallbackInit(UDMA_CHANNEL_SW, DmaCallbackFunc[0]);
 	
-		uDMAChannelEnable(UDMA_CHANNEL_SW);
-	  xIntEnable(INT_UDMA);    
+    uDMAChannelEnable(UDMA_CHANNEL_SW);
+    xIntEnable(INT_UDMA);    
     xIntPrioritySet(INT_UDMA, 1);
 	
-	  uDMAChannelRequest(UDMA_CHANNEL_SW);
+    uDMAChannelRequest(UDMA_CHANNEL_SW);
 
     TestAssertQBreak("a", "Transfer Over Interrupy fialed!", 5000000);
 }
@@ -271,7 +271,7 @@ static void xdma004_uDMAInterrupt_Test(void)
 static void xDma004Execute(void)
 {
     xdma004_uDMATransfer_Test();
-	  xdma004_uDMAInterrupt_Test();
+    xdma004_uDMAInterrupt_Test();
 }
 
 //

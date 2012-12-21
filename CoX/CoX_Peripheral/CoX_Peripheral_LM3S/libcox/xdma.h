@@ -228,22 +228,22 @@
 
 #define xDMA_REQUEST_NOT_EXIST  0x00000000
 #define xDMA_REQUEST_MEM        0x80000000
-
-//#define xDMA_REQUEST_USB0_EP1_RX                                              \ 
-//                                0x00000080
-//#define xDMA_REQUEST_USB0_EP1_TX                                              \ 
-//                                0x40000081
-//#define xDMA_REQUEST_USB0_EP2_RX                                              \ 
-//                                0x00000082
-//#define xDMA_REQUEST_USB0_EP2_TX                                              \ 
-//                                0x40000083
-//#define xDMA_REQUEST_USB0_EP3_RX                                              \ 
-//                                0x00000084
-//#define xDMA_REQUEST_USB0_EP3_TX                                              \ 
-//                                0x40000085
-
-//#define xDMA_REQUEST_ETH0_RX    0x00000086
-//#define xDMA_REQUEST_ETH0_TX    0x40000087
+#if 0
+#define xDMA_REQUEST_USB0_EP1_RX                                              \ 
+                                0x00000080
+#define xDMA_REQUEST_USB0_EP1_TX                                              \ 
+                                0x40000081
+#define xDMA_REQUEST_USB0_EP2_RX                                              \ 
+                                0x00000082
+#define xDMA_REQUEST_USB0_EP2_TX                                              \ 
+                                0x40000083
+#define xDMA_REQUEST_USB0_EP3_RX                                              \ 
+                                0x00000084
+#define xDMA_REQUEST_USB0_EP3_TX                                              \ 
+                                0x40000085
+#endif
+#define xDMA_REQUEST_ETH0_RX    0x00000086
+#define xDMA_REQUEST_ETH0_TX    0x40000087
 
 #define xDMA_REQUEST_UART0_RX   0x00000088
 #define xDMA_REQUEST_UART0_TX   0x40000089

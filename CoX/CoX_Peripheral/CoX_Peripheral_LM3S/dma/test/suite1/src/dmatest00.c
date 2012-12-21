@@ -97,7 +97,7 @@ static void xDma001Setup(void)
     //
     // Enable Peripheral uDMA
     //
-		SysCtlPeripheralReset(SYSCTL_PERIPH_UDMA);
+    SysCtlPeripheralReset(SYSCTL_PERIPH_UDMA);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UDMA);
 }
 
@@ -130,18 +130,18 @@ static void xdmaEnableTest(void)
     //
     // Test uDMA Enable
     //
-		uDMAEnable();
-		ulRegVal = xHWREG(UDMA_CFG);
-		TestAssert(ulRegVal = UDMA_CFG_MASTEN, "dma API error!"); 
+    uDMAEnable();
+    ulRegVal = xHWREG(UDMA_CFG);
+    TestAssert(ulRegVal = UDMA_CFG_MASTEN, "dma API error!"); 
 	
     for(i = 0; i < 32; i++)
     {
         uDMAChannelEnable(ulChannelID[i]);
-			  ulTemp = 1 << ulChannelID[i];
+        ulTemp = 1 << ulChannelID[i];
         ulRegVal = xHWREG(UDMA_ENASET) & ulTemp;      
         TestAssert(ulTemp == ulRegVal, "dma API error!"); 
-				ulTemp = uDMAChannelIsEnabled(ulChannelID[i]);
-			  TestAssert(ulTemp == 1, "dma API error!"); 
+        ulTemp = uDMAChannelIsEnabled(ulChannelID[i]);
+        TestAssert(ulTemp == 1, "dma API error!"); 
     }
 }
 
@@ -183,7 +183,7 @@ static void xdmaChannelDynamicAssignTest(void)
     for(i = 0; i < 6; i++)
     {
         ulRegVal = xDMAChannelDynamicAssign(xDMA_REQUEST_MEM, ulDestAddr[i]);
-			  ulTemp = xDMAChannelAssignmentGet(ulRegVal);
+        ulTemp = xDMAChannelAssignmentGet(ulRegVal);
         TestAssert(ulTemp == 1,"dma API error!");
         xDMAChannelDeAssign(ulRegVal);
     }
@@ -191,7 +191,7 @@ static void xdmaChannelDynamicAssignTest(void)
     for(i = 0; i < 6; i++)
     {
         ulRegVal = xDMAChannelDynamicAssign(ulSrcAddr[i], xDMA_REQUEST_MEM);
-			  ulTemp = xDMAChannelAssignmentGet(ulRegVal);
+        ulTemp = xDMAChannelAssignmentGet(ulRegVal);
         TestAssert(ulTemp == 1,"dma API error!");    
         xDMAChannelDeAssign(ulRegVal);
     }
@@ -208,7 +208,7 @@ static void xDma001Execute(void)
 {
     xdmaEnableTest();
     xdmaChannelDynamicAssignTest();
-	  xdmaDisableTest();
+    xdmaDisableTest();
 }
 
 //

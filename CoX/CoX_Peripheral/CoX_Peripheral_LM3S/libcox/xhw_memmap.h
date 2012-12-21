@@ -88,7 +88,7 @@
 #define xGPIO_PORTF_BASE        GPIO_PORTF_BASE
 #define xGPIO_PORTG_BASE        GPIO_PORTG_BASE
 #define xGPIO_PORTH_BASE        GPIO_PORTH_BASE
-#define xGPIO_PORTJ_BASE				GPIO_PORTJ_BASE
+#define xGPIO_PORTJ_BASE        GPIO_PORTJ_BASE
 #define xI2C0_BASE              I2C0_MASTER_BASE
 #define xI2C1_BASE              I2C1_MASTER_BASE
 #define xNVIC_BASE              NVIC_BASE
@@ -98,8 +98,8 @@
 #define xUART0_BASE             UART0_BASE 
 #define xUART1_BASE             UART1_BASE
 #define xUART2_BASE             UART2_BASE
-#define xWDT_BASE0							WATCHDOG0_BASE
-#define xWDT_BASE1							WATCHDOG1_BASE
+#define xWDT_BASE0              WATCHDOG0_BASE
+#define xWDT_BASE1              WATCHDOG1_BASE
 
 //*****************************************************************************
 //

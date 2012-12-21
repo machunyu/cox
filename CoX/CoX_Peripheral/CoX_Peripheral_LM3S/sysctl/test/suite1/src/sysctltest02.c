@@ -124,13 +124,13 @@ static void xSysctl003TearDown(void)
     ulTemp = SYSCTL_SYSDIV_1|SYSCTL_XTAL_8MHZ|SYSCTL_OSC_MAIN | SYSCTL_USE_OSC;
     SysCtlClockSet(ulTemp);
     
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);//开启GPIOA时钟
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     
     xSPinTypeUART(UART0RX, PA0);
     xSPinTypeUART(UART0TX, PA1);
     
     xSysCtlPeripheralReset(xSYSCTL_PERIPH_UART0);
-    xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART0);                    //打开串口0时钟
+    xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART0);                   
     
     UARTConfigSetExpClk(UART0_BASE, 115200, (UART_CONFIG_WLEN_8     | 
                                             UART_CONFIG_STOP_1      | 

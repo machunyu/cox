@@ -74,7 +74,7 @@ static void xDma005Setup(void)
     //
     // Enable Peripheral uDMA
     //
-	  SysCtlPeripheralReset(SYSCTL_PERIPH_UDMA);
+    SysCtlPeripheralReset(SYSCTL_PERIPH_UDMA);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UDMA);
 }
 
@@ -107,30 +107,30 @@ static void xDma005TearDown(void)
 //*****************************************************************************
 void xdma005_uDMAChannelInit(void)
 {
-		unsigned long ulTemp;
-	
+    unsigned long ulTemp;
+
     uDMAEnable();
-	  uDMAControlBaseSet(ucDMAControlTable);
-    
+    uDMAControlBaseSet(ucDMAControlTable);
+
     ulAssignChannelNum = xDMAChannelDynamicAssign(xDMA_REQUEST_MEM, 
-                                                  xDMA_REQUEST_SPI0_TX);
-	
-		ulTemp = (UDMA_ATTR_USEBURST | UDMA_ATTR_ALTSELECT | UDMA_ATTR_REQMASK);
-	  uDMAChannelAttributeDisable(ulAssignChannelNum, ulTemp);
-	  uDMAChannelAttributeEnable(ulAssignChannelNum, UDMA_ATTR_HIGH_PRIORITY);
-	  //
+									  xDMA_REQUEST_SPI0_TX);
+
+    ulTemp = (UDMA_ATTR_USEBURST | UDMA_ATTR_ALTSELECT | UDMA_ATTR_REQMASK);
+    uDMAChannelAttributeDisable(ulAssignChannelNum, ulTemp);
+    uDMAChannelAttributeEnable(ulAssignChannelNum, UDMA_ATTR_HIGH_PRIORITY);
+    //
     // Set Channel control  parameter
     //
-	  ulTemp = (UDMA_SIZE_32 | UDMA_SRC_INC_32 | xDMA_DST_INC_NONE |  UDMA_ARB_1);
+    ulTemp = (UDMA_SIZE_32 | UDMA_SRC_INC_32 | xDMA_DST_INC_NONE |  UDMA_ARB_1);
     uDMAChannelControlSet(ulAssignChannelNum | UDMA_PRI_SELECT, ulTemp);
-	
-	  //
-	  // 目的地址为SSI0的数据寄存器
-	  //
-	  ulTemp = xSPI0_BASE + SSI_DR;// SPI_TX0;
-	  uDMAChannelTransferSet(ulAssignChannelNum | UDMA_PRI_SELECT, UDMA_MODE_BASIC, ulSrcMem, (void *)ulTemp, 8);
+
+    //
+    // 目的地址为SSI0的数据寄存器
+    //
+    ulTemp = xSPI0_BASE + SSI_DR;// SPI_TX0;
+    uDMAChannelTransferSet(ulAssignChannelNum | UDMA_PRI_SELECT, UDMA_MODE_BASIC, ulSrcMem, (void *)ulTemp, 8);
 		
-		uDMAChannelEnable(ulAssignChannelNum);
+    uDMAChannelEnable(ulAssignChannelNum);
 }
 
 //*****************************************************************************
@@ -142,10 +142,10 @@ void xdma005_uDMAChannelInit(void)
 //*****************************************************************************
 static void xdma005_uDMASPIInit(void)
 {
-	  unsigned long ulTemp;
-	  
-	  SysCtlPeripheralReset(SYSCTL_PERIPH_SSI0);
-	  SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
+    unsigned long ulTemp;
+
+    SysCtlPeripheralReset(SYSCTL_PERIPH_SSI0);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
     //
     // Configure Some GPIO pins as SPI Mode
     //
@@ -161,7 +161,7 @@ static void xdma005_uDMASPIInit(void)
     ulTemp = (xSPI_MOTO_FORMAT_MODE_0 | xSPI_MODE_MASTER | xSPI_DATA_WIDTH8);
     xSPIConfigSet(xSPI0_BASE, 2000000, ulTemp);
 	  
-	  //
+    //
     // make ssi run as loopback test mode
     //
     xHWREG(xSPI0_BASE + SSI_CR1) |= SSI_CR1_LBM;
@@ -193,7 +193,7 @@ static void xdma005_uDMATransferMtoPTest(void)
     //
     for(i = 0; i < 8; i++)
     {
-			  uDMAChannelRequest(ulAssignChannelNum);
+        uDMAChannelRequest(ulAssignChannelNum);
         while(SSIBusy(xSPI0_BASE));
         SSIDataGet(xSPI0_BASE, &ulDestSPI[i]);
     }

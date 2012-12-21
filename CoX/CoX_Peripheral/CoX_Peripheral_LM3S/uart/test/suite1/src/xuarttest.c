@@ -878,7 +878,8 @@ void xuart007Execute_DMA_Register(void)
 //*****************************************************************************
 unsigned long UARTDMACallbackFunc(void *pvCBData, unsigned long ulEvent,
                                 unsigned long ulMsgParam, void *pvMsgData)                                                                                  
-{                      
+{       
+    return 0;
 }
 
 //*****************************************************************************

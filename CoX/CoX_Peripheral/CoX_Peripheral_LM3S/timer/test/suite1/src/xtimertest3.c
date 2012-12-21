@@ -72,8 +72,6 @@ static unsigned long ulTimerID[4] = {xSYSCTL_PERIPH_TIMER0,
 //
 static unsigned long ulTimerAIntID[8] = {xINT_TIMER0, xINT_TIMER1, 
                                          xINT_TIMER2, xINT_TIMER3};
-static unsigned long ulTimerBIntID[4] = {INT_TIMER0B, INT_TIMER1B, 
-                                         INT_TIMER2B,INT_TIMER3B};
 
 //
 // Install callback function

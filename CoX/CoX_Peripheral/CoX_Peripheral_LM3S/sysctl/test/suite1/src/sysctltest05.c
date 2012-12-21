@@ -143,13 +143,13 @@ static void xsysctl_xSysCtlPeripheralReset2_test(void)
     for(i = 0; i < 2; i++)
     {
         xSysCtlPeripheralReset2(ulPeriprerAddr[i]);
-        TestAssert( (0 == xHWREG(SYSCTL_SRCR0))&&(0 == xHWREG(SYSCTL_SRCR1))&&(0 == xHWREG(SYSCTL_SRCR2)), 
+        TestAssert((0 == xHWREG(SYSCTL_SRCR0))&&(0 == xHWREG(SYSCTL_SRCR1))&&(0 == xHWREG(SYSCTL_SRCR2)), 
                                                           "xsysctl API error!");
     }
     for(i = 0; i < 7; i++)
     {
         xSysCtlPeripheralReset2(ulGPIOBaseAddr[i]);
-        TestAssert( (0 == xHWREG(SYSCTL_SRCR0))&&(0 == xHWREG(SYSCTL_SRCR1))&&(0 == xHWREG(SYSCTL_SRCR2)), 
+        TestAssert((0 == xHWREG(SYSCTL_SRCR0))&&(0 == xHWREG(SYSCTL_SRCR1))&&(0 == xHWREG(SYSCTL_SRCR2)), 
                                                           "xsysctl API error!");
     }
 }

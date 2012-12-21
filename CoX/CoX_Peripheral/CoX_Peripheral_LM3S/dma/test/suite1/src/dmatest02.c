@@ -131,12 +131,12 @@ static void xdma003_uDMAChannelTransferSet_Test(void)
         //
         uDMAChannelEnable(ulDMAChannelID[i]);
 				 
-				uDMAControlBaseSet(ucDMAControlTable);
+        uDMAControlBaseSet(ucDMAControlTable);
 			
         //
         // uDMA Channel Control Set
         //
-				ulTemp = (UDMA_SIZE_32 | UDMA_SRC_INC_8 | UDMA_DST_INC_8);
+        ulTemp = (UDMA_SIZE_32 | UDMA_SRC_INC_8 | UDMA_DST_INC_8);
         uDMAChannelControlSet(ulDMAChannelID[i] | UDMA_PRI_SELECT, ulTemp);                                                                           
                                                                   
         //

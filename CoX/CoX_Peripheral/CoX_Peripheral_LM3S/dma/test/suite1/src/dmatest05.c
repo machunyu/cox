@@ -49,17 +49,17 @@ unsigned long UARTDmaCallbackFunc0(void *pvCBData,  unsigned long ulEvent,
 {
     TestEmitToken('a');
 #if 0
-    ulMode = uDMAChannelModeGet(UDMA_CHANNEL_UART0RX | UDMA_PRI_SELECT); /* 读取UART0RX的主结构模式      */  
-    if(ulMode == UDMA_MODE_STOP)                                         /* 停止模式表示传输结束         */
+    ulMode = uDMAChannelModeGet(xDMA_CHANNEL_8 | UDMA_PRI_SELECT); /* 读取UART0RX的主结构模式      */  
+    if(ulMode == UDMA_MODE_STOP)                                   /* 停止模式表示传输结束         */
     {
-        uDMAChannelTransferSet(UDMA_CHANNEL_UART0RX | UDMA_PRI_SELECT,
-                               UDMA_MODE_BASIC,(void*)0x4000C000,
+        uDMAChannelTransferSet(xDMA_CHANNEL_8 | UDMA_PRI_SELECT,
+                               UDMA_MODE_PINGPONG,(void*)0x4000C000,
                                (void *)0x4000C000, 
                                 8);                /* Reset                    */
    }
-   while(uDMAChannelIsEnabled(UDMA_CHANNEL_UART0RX)==0)
+   while(uDMAChannelIsEnabled(xDMA_CHANNEL_8)==0)
    {
-       uDMAChannelEnable(UDMA_CHANNEL_UART0RX);   /* 重新使能UART0 RX通道         */
+       uDMAChannelEnable(xDMA_CHANNEL_8);   /* 重新使能UART0 RX通道         */
    } 
 #endif	 
    return 0;
@@ -108,7 +108,7 @@ static void xDma006TearDown(void)
     SysCtlPeripheralDisable(SYSCTL_PERIPH_UDMA); 
     SysCtlPeripheralDisable(SYSCTL_PERIPH_GPIOA);
     SysCtlPeripheralReset(SYSCTL_PERIPH_GPIOA);		
-		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     
     xSPinTypeUART(UART0RX, PA0);
     xSPinTypeUART(UART0TX, PA1);
@@ -117,8 +117,8 @@ static void xDma006TearDown(void)
     xSysCtlPeripheralEnable(xSYSCTL_PERIPH_UART0);                    
 
     UARTConfigSetExpClk(UART0_BASE, 115200, (UART_CONFIG_WLEN_8     | 
-																				     UART_CONFIG_STOP_1     | 
-																				     UART_CONFIG_PAR_NONE));
+                                             UART_CONFIG_STOP_1     | 
+                                             UART_CONFIG_PAR_NONE));
     UARTEnable(UART0_BASE, (UART_BLOCK_UART | UART_BLOCK_TX | UART_BLOCK_RX));
 }
 
@@ -136,32 +136,38 @@ static void xDma006TearDown(void)
 //*****************************************************************************
 void xdma006_uDMAInit(void)
 {  
-		unsigned long ulTemp;
+    unsigned long ulTemp;
+
+    uDMAEnable();
+    uDMAControlBaseSet(ucDMAControlTable);
 	
-	  uDMAEnable();
-	  uDMAControlBaseSet(ucDMAControlTable);
-	
-		uDMAChannelAttributeDisable(xDMA_CHANNEL_8, UDMA_ATTR_USEBURST      |
-	                                              UDMA_ATTR_ALTSELECT     |
-	                                              UDMA_ATTR_HIGH_PRIORITY |
-	                                              UDMA_ATTR_REQMASK);
+    uDMAChannelAttributeDisable(xDMA_CHANNEL_8, UDMA_ATTR_USEBURST      |
+	                                            UDMA_ATTR_ALTSELECT     |
+	                                            UDMA_ATTR_HIGH_PRIORITY |
+	                                            UDMA_ATTR_REQMASK);
 	  
-	  ulTemp = UDMA_SIZE_8 | UDMA_SRC_INC_NONE | UDMA_DST_INC_NONE |UDMA_ARB_8;
+    //uDMAChannelAttributeEnable(UDMA_CHANNEL_UART0RX, UDMA_ATTR_ALTSELECT ); 
+
+    ulTemp = UDMA_SIZE_8 | UDMA_SRC_INC_NONE | UDMA_DST_INC_NONE |UDMA_ARB_8;
     uDMAChannelControlSet(xDMA_CHANNEL_8 | UDMA_PRI_SELECT, ulTemp);
-	  
-	  uDMAChannelTransferSet(xDMA_CHANNEL_8 | UDMA_PRI_SELECT, UDMA_MODE_BASIC, 
-	                                                           (void*)0x4000c000,
-	                                                           (void*)0x4000c000, 
-	                                                           8);
-	  uDMAChannelEnable(xDMA_CHANNEL_8);
-	  UARTDMAEnable(UART0_BASE,UART_DMA_RX);
-	
+
+    uDMAChannelTransferSet(xDMA_CHANNEL_8 | UDMA_PRI_SELECT, UDMA_MODE_PINGPONG, 
+												             (void*)0x4000c000,
+												             (void*)0x4000c000, 
+												              8);
+    uDMAChannelEnable(xDMA_CHANNEL_8);
+    UARTDMAEnable(UART0_BASE,UART_DMA_RX | UART_DMA_TX);
     UARTFIFOLevelSet(UART0_BASE,UART_FIFO_TX6_8,UART_FIFO_RX4_8);
-    xUARTIntCallbackInit(UART0_BASE, UARTDmaCallbackFunc0);
-		xIntMasterEnable();
-    xIntEnable(INT_UART0);
+
+    //xDMAChannelIntCallbackInit(xDMA_CHANNEL_8, UARTDmaCallbackFunc0);
+    //xIntMasterEnable();
+    //xIntEnable(INT_UART0);
 }
 
+void Delay(unsigned int t)
+{
+    while(t--);
+}
 //*****************************************************************************
 //
 //! \brief uDMA Configure and Trig transfer
@@ -177,7 +183,7 @@ static void xdma006_uDMATransfer_Test(void)
 {
     xdma006_uDMAInit();
 
-    TestAssertQBreak("a", "Receive Interrupy fialed!", 5000000);
+    TestAssertQBreak("a", "UART Receive Interrupy  fialed!", 5000000);
 }
 
 //*****************************************************************************

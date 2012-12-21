@@ -1101,15 +1101,22 @@ GPIOPinRead(unsigned long ulPort, unsigned char ucPins)
 void
 GPIOPinWrite(unsigned long ulPort, unsigned char ucPins, unsigned char ucVal)
 {
+    unsigned char ucCnt = 0, ucTemp;
+    ucTemp = ucPins;
     //
     // Check the arguments.
     //
     xASSERT(GPIOBaseValid(ulPort));
-
+    ucTemp >>= 1;
+    while(ucTemp)
+    {
+        ucCnt++;
+        ucTemp >>= 1; 
+    }
     //
     // Write the pins.
     //
-    xHWREG(ulPort + (GPIO_DATA + (ucPins << 2))) = ucVal;
+    xHWREG(ulPort + (GPIO_DATA + (ucPins << 2))) = (ucVal << ucCnt);
 }
 
 //*****************************************************************************
